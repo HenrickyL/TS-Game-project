@@ -6,6 +6,7 @@
       "outDir": "./dist", // Diretório de saída para os arquivos compilados (opcional)
       "rootDir": ".", // Diretório de origem dos arquivos TypeScript (ajuste conforme sua estrutura)
       "baseUrl": "./",
+      "esModuleInterop": true,
       "paths": {
         // "*": ["./"],
         "@modules/*":     ["./app/modules/*"],

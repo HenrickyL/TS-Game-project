@@ -1,6 +1,6 @@
 export enum SocketEvent {
     MESSAGE = 'message',
-    CONNECT = 'connect',
+    CONNECTION = 'connection',
     CLOSE = 'close',
     ERROR = 'error',
   }
