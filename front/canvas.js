@@ -7,6 +7,7 @@ window.addEventListener('load', ()=>{
     intro.DrawRect(context)
     intro.DrawLines(context)
     intro.DrawCircle(context)
+    intro.Animate(context)
 })
 
 

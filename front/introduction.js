@@ -21,17 +21,22 @@ function DrawCircle(context){
     context.stroke()
 }
 
-function DrawArc(context){
+function Animate(context){
+    requestAnimationFrame(()=>Animate(context))
+    context.clearRect(0,0, 800, 600)
+    context.fillStyle = "rgba(0,0,255, 0.5)"
+    context.fillRect(40,10, 20,20)
 }
-
-
 
 
 const Introduction = {
     DrawLines,
     DrawRect,
     DrawCircle,
-    DrawArc
+    Animate
 }
+
+
+
 
 export default Introduction
