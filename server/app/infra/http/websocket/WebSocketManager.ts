@@ -1,4 +1,5 @@
 import { IRoom } from "@core/infra/IRoom";
+import {IConnectClient} from "@core/DTOs"
 import { SocketEvent } from "@enums/index";
 import {ISocketManeger} from "@core/infra/ISocketManeger"
 
@@ -37,8 +38,12 @@ export class WebSocketManager implements ISocketManeger<WebSocket>{
         const clientId : string = uuid()
         this.connectedSockets.set(clientId, socket);
         this.socketToClientId.set(socket, clientId);
-
-        const jsonString = JSON.stringify({message:'Bem-vindo ao servidor WebSocket!'});
+        
+        const response: IConnectClient = {
+            clientId: clientId ,
+            message:'Bem-vindo ao servidor WebSocket!'
+        }
+        const jsonString = JSON.stringify(response);
         this.log(clientId, "Nova conexão estabelecida.")
 
         // Envie uma mensagem de boas-vindas para o cliente
