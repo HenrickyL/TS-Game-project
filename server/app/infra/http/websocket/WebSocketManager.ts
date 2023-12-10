@@ -1,5 +1,5 @@
 import { IRoom } from "@core/infra/IRoom";
-import {IConnectClient} from "@core/DTOs"
+import {IConnectClient, IMessage} from "@core/DTOs"
 import { SocketEvent } from "@enums/index";
 import {ISocketManeger} from "@core/infra/ISocketManeger"
 
@@ -33,21 +33,28 @@ export class WebSocketManager implements ISocketManeger<WebSocket>{
         console.log(`[id:${clientId}] ${message}`);
     }
 
+    send(socket: WebSocket, type: string, message: string, data: any){
+        const response: IMessage = {
+            type,
+            message,
+            data
+        }
+        const jsonString = JSON.stringify(response);
+        socket.send(jsonString);
+    }
+
     onConnect(socket: WebSocket): void {
         // Lógica a ser executada quando uma conexão é estabelecida
         const clientId : string = uuid()
         this.connectedSockets.set(clientId, socket);
         this.socketToClientId.set(socket, clientId);
-        
-        const response: IConnectClient = {
-            clientId: clientId ,
-            message:'Bem-vindo ao servidor WebSocket!'
-        }
-        const jsonString = JSON.stringify(response);
-        this.log(clientId, "Nova conexão estabelecida.")
 
-        // Envie uma mensagem de boas-vindas para o cliente
-        socket.send(jsonString);
+        const response: IConnectClient = {
+            clientId: clientId 
+        }
+        this.send(socket, SocketEvent.CONNECTION, 'Bem-vindo ao servidor WebSocket!', response)
+        
+        this.log(clientId, "Nova conexão estabelecida.")
 
         // Lidar com eventos de mensagem recebida
         socket.on(SocketEvent.MESSAGE, (message: string) => {
@@ -80,9 +87,10 @@ export class WebSocketManager implements ISocketManeger<WebSocket>{
         return newRoom;
     }
 
-    sendMessageToAll(message: string): void {
+    sendMessageToAll(message: string, data: any): void {
         this.connectedSockets.forEach((socket) => {
             if (socket.readyState === WebSocket.OPEN) {
+                this.send(socket, SocketEvent.MESSAGE, message, data)
                 socket.send(message);
             }
         });

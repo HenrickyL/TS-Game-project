@@ -7,5 +7,5 @@ export interface ISocketManeger<ISocket>{
   onMessage(socket: ISocket, message: string): void;
   getAvailableRoomId(): string | null;
   createRoom(): IRoom;
-  sendMessageToAll(message: string): void
+  sendMessageToAll(message: string, data: any): void
 }

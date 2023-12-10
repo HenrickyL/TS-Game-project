@@ -15,7 +15,7 @@ class WebSocketHandler {
       const receivedData = JSON.parse(event.data);
       console.log(`Mensagem recebida do servidor: `, receivedData);
       // Lógica para processar a mensagem recebida do servidor
-      this.handleMessage(message);
+      this.handleMessage(receivedData);
     }
   
     onError(error) {
