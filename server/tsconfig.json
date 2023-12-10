@@ -10,9 +10,9 @@
         // "*": ["./"],
         "@modules/*":     ["./app/modules/*"],
         "@core/*":        ["./app/core/*"],
+        "@enums/*":       ["./app/core/enums/*"],
         "@infra/*":       ["./app/infra/*"],
         "@config/*":      ["./config/*"],
-        "@enums/*":      ["./app/core/enums/*"],
       },
     },
     "include": [
