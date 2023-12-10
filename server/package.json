@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "start": "ts-node"
+    "start": "ts-node -r tsconfig-paths/register main.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
