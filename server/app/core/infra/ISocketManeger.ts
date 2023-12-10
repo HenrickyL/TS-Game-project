@@ -1,7 +1,7 @@
 import { ISocket } from './ISocket';
 import { IRoom } from './IRoom';
 
-export interface ISocketManager {
+export interface ISocketManeger {
   handleConnections(): void;
   onConnect(socket: ISocket): void;
   onMessage(socket: ISocket, message: string): void;
