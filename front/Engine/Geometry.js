@@ -36,6 +36,20 @@ export class Geometry{
         throw new NotImplementError();
     }
 
+    left(){
+        throw new NotImplementError();
+    }
+    right(){
+        throw new NotImplementError();
+    }
+
+    top(){
+        throw new NotImplementError();
+    }
+    down(){
+        throw new NotImplementError();
+    }
+
 }
 
 
@@ -67,6 +81,60 @@ export class Rect extends Geometry{
 
     draw(context){
         context.fillStyle = this.Color
-        context.fillRect(this._position.X,this._position.Y, this.Width,this.Height)
+        context.fillRect(this.left(),this.top(), this.Width,this.Height)
+    }
+
+    left(){
+        return this.Position.X - this.Width/2
+    }
+    right(){
+        return this.Position.X + this.Width/2
+    }
+
+    top(){
+        return this.Position.Y - this.Height/2
+    }
+    down(){
+        return this.Position.Y + this.Height/2
+    }
+}
+
+
+export class Circle extends Geometry{
+    #radius = 10;
+    
+    constructor(position, radius) {
+        super(position, GeometryType.CIRCLE)
+        this.#radius = radius
+    }
+
+    set Radius(radius){
+        this.#radius = radius
+    }
+
+    
+    get Radius() {
+        return this.#radius;
+    }
+
+    draw(context){
+        context.beginPath()
+        context.arc(this.Position.X,this.Position.Y, this.#radius, 0 , Math.PI*2,  false)
+        context.strokeStyle = this.Color
+        context.stroke()
+    }
+
+    left(){
+        return this.Position.X - this.Radius
+    }
+    right(){
+        return this.Position.X + this.Radius
+    }
+
+    top(){
+        return this.Position.Y - this.Radius
+    }
+    down(){
+        return this.Position.Y + this.Radius
     }
 }
