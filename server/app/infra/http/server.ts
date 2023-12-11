@@ -11,5 +11,6 @@ const server = createServer(api);
 const webSocketManager = new WebSocketManager(server);
 
 server.listen(3000, () => {
+    console.clear()
     console.log('Servidor WebSocket está ouvindo na porta 3000');
 });

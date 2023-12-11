@@ -1,5 +1,5 @@
 import { IManeger } from "@core/infra";
-import {IConnectClient, IMessage} from "@core/DTOs"
+import {IConnectClient, IMessage, IConnectGame} from "@core/DTOs"
 import { PlayerStatus, SocketEvent } from "@enums/index";
 
 import {WebSocketServer, WebSocket} from 'ws'
@@ -36,8 +36,8 @@ export class WebSocketManager implements IManeger<WebSocket>{
 
     onConnect(socket: WebSocket): void {
         // Lógica a ser executada quando uma conexão é estabelecida
-        const clientId = this.createPlayer(socket)
-        this.logClient(clientId, "Nova conexão estabelecida.")
+        const player = this.createPlayer(socket)
+        this.logClient(player.Id, "Nova conexão estabelecida.")
         this.checkRoomAvailability()
         // Lidar com eventos de mensagem recebida
         socket.on(SocketEvent.MESSAGE, (message: string) => {
@@ -80,8 +80,15 @@ export class WebSocketManager implements IManeger<WebSocket>{
 
     checkRoomAvailability(): void {
         if (this.clientQueue.length >= 2) {
-            const roomId = this.createGame()
-            this.logRoom(roomId, "Sala Criada")
+            const game = this.createGame()
+            game.Players.forEach(player=>{
+                const data: IConnectGame = {
+                    gameId: game.Id,
+                    status: game.Status
+                }
+                this.send(player.Socket, PlayerStatus.CONNECTED, "Você se conectou a um jogo", data)
+            })
+            this.logRoom(game.Id, "Sala Criada")
         }
     }
 
@@ -132,7 +139,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
         }
     }
 
-    private createGame(): string{
+    private createGame(): Game{
         const players = this.clientQueue.splice(0, 2); // Retira 2 clientes da fila
         const game = new Game();
         const roomId = game.Id
@@ -141,10 +148,10 @@ export class WebSocketManager implements IManeger<WebSocket>{
             game.addPlayer(player)
             player.SetGame(game)
         })
-        return roomId
+        return game
     }
 
-    private createPlayer(socket: WebSocket): string{
+    private createPlayer(socket: WebSocket): Player{
         const player = new Player(socket);
         const clientId : string = player.Id
         this.connectedSockets.set(clientId, player);
@@ -158,6 +165,6 @@ export class WebSocketManager implements IManeger<WebSocket>{
         this.send(socket, SocketEvent.CONNECTION, 'welcome, wait join room', response)
         
         this.clientQueue.push(player)
-        return player.Id
+        return player
     }
 }

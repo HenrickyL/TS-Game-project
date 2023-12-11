@@ -1,8 +1,14 @@
 import { PlayerStatus } from "@core/enums"
+import { GameStatus } from "@core/enums/GameStatus"
 
 export interface IConnectClient {
     clientId: string
     status: PlayerStatus
+}
+
+export interface IConnectGame {
+    gameId: string
+    status: GameStatus
 }
 
 
@@ -12,7 +18,7 @@ export interface IMessage<T = any>{
     data?: T
 }
 
-export interface CloseGame{
+export interface ICloseGame{
     gameId: string,
     reason: string
 }
