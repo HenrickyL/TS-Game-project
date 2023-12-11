@@ -2,7 +2,6 @@ import {createServer} from "http"
 import { WebSocketManager } from "./websocket/WebSocketManager";
 import cors from 'cors'
 import express from 'express'
-import { Game } from "@core/entities/Game";
 
 const api = express()
 api.use(cors());
