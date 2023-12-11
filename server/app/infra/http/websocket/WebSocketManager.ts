@@ -38,7 +38,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
         // Lógica a ser executada quando uma conexão é estabelecida
         const clientId = this.createPlayer(socket)
         this.logClient(clientId, "Nova conexão estabelecida.")
-
+        this.checkRoomAvailability()
         // Lidar com eventos de mensagem recebida
         socket.on(SocketEvent.MESSAGE, (message: string) => {
             this.onMessage(socket, message);
@@ -122,7 +122,8 @@ export class WebSocketManager implements IManeger<WebSocket>{
             this.logClient(player.Id,"Cliente desconectado.")
             this.removeFromQueue(socket);
             const game = player.Game
-            if(game){
+            if(game && game.Status != GameStatus.STOP){
+                game.setStatus(GameStatus.STOP)
                 game.Players.forEach(player=>{
                     this.send(player.Socket, GameStatus.STOP,"Seu inimigo se desconectou",  null)
                 })
@@ -157,7 +158,6 @@ export class WebSocketManager implements IManeger<WebSocket>{
         this.send(socket, SocketEvent.CONNECTION, 'welcome, wait join room', response)
         
         this.clientQueue.push(player)
-        this.checkRoomAvailability()
         return player.Id
     }
 }
