@@ -1,36 +1,35 @@
-import { IRoom } from "@core/infra/IRoom";
+import { IManeger } from "@core/infra";
 import {IConnectClient, IMessage} from "@core/DTOs"
 import { SocketEvent } from "@enums/index";
-import {ISocketManeger} from "@core/infra/ISocketManeger"
 
 import {WebSocketServer, WebSocket} from 'ws'
 import { v4 as uuid } from 'uuid';
 
-export class WebSocketManager implements ISocketManeger<WebSocket>{
+export class WebSocketManager implements IManeger<WebSocket>{
     private wss: WebSocketServer
-    private rooms: IRoom[];
     private connectedSockets: Map<string, WebSocket>;
     private socketToClientId: Map<WebSocket, string>
 
+    private clientQueue : WebSocket[] = [];
+    private rooms: Map<string, WebSocket[]>;
+
     constructor(server : any){
         this.wss = new WebSocket.Server({server});
-        this.rooms = [];
         this.connectedSockets = new Map<string, WebSocket>();
         this.socketToClientId = new Map<WebSocket, string >();
-
+        this.rooms = new Map<string, WebSocket[]>();
         this.handleConnections();
+    }
+
+    get Rooms() : Map<string, WebSocket[]> {
+        return this.rooms
     }
 
     handleConnections(): void {
         this.wss.on(SocketEvent.CONNECTION, (ws: WebSocket) => {
             this.onConnect(ws);
             this.onDisconnect(ws);
-            
         });
-    }
-
-    log(clientId: string, message: string): void{
-        console.log(`[id:${clientId}] ${message}`);
     }
 
     send(socket: WebSocket, type: string, message: string, data: any){
@@ -54,7 +53,7 @@ export class WebSocketManager implements ISocketManeger<WebSocket>{
         }
         this.send(socket, SocketEvent.CONNECTION, 'Bem-vindo ao servidor WebSocket!', response)
         
-        this.log(clientId, "Nova conexão estabelecida.")
+        this.logClient(clientId, "Nova conexão estabelecida.")
 
         // Lidar com eventos de mensagem recebida
         socket.on(SocketEvent.MESSAGE, (message: string) => {
@@ -64,27 +63,22 @@ export class WebSocketManager implements ISocketManeger<WebSocket>{
     onDisconnect(socket: WebSocket): void {
         socket.on(SocketEvent.CLOSE, () => {
             // Remover o cliente desconectado usando a busca reversa
-            const clientId = this.socketToClientId.get(socket);
+            const clientId = this.getClientIdBySocket(socket)
             if (clientId) {
                 this.connectedSockets.delete(clientId);
                 this.socketToClientId.delete(socket);
-                this.log(clientId,"Cliente desconectado.")
+                this.logClient(clientId,"Cliente desconectado.")
+                this.removeFromQueue(socket);
             }
         });
     }
 
     onMessage(socket: WebSocket, message: string): void {
         const clientId = this.socketToClientId.get(socket);
-        this.log(clientId || 'undefined' ,`Mensagem recebida: ${message}`);
+        this.logClient(clientId || 'undefined' ,`Mensagem recebida: ${message}`);
     }
     getAvailableRoomId(): string | null {
         throw new Error("Method not implemented.");
-    }
-    createRoom(): IRoom {
-        const roomId = Math.random().toString(36).substring(7);
-        const newRoom: IRoom = { id: roomId, clients: [] };
-        this.rooms.push(newRoom);
-        return newRoom;
     }
 
     sendMessageToAll(message: string, data: any): void {
@@ -94,5 +88,34 @@ export class WebSocketManager implements ISocketManeger<WebSocket>{
                 socket.send(message);
             }
         });
+    }
+
+    getClientIdBySocket(socket: WebSocket): string  | null {
+        return this.socketToClientId.get(socket) || null
+    }
+
+    checkRoomAvailability(): void {
+        if (this.clientQueue.length >= 2) {
+            const players = this.clientQueue.splice(0, 2); // Retira 2 clientes da fila
+            const roomId = uuid();
+            this.logRoom(roomId, "Sala Criada")
+            this.rooms.set(roomId, players);
+            // Inicie o jogo com esses jogadores na sala roomId
+        }
+    }
+
+    removeFromQueue(socket: WebSocket): void {
+        const index = this.clientQueue.indexOf(socket);
+        if (index !== -1) {
+            this.clientQueue.splice(index, 1);
+        }
+    }
+
+    logClient(clientId: string, message: string): void{
+        console.log(`[id:${clientId}] ${message}`);
+    }
+    
+    logRoom(roomId: string, message: string): void{
+        console.log(`<id:${roomId}> ${message}`);
     }
 }
