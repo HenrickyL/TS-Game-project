@@ -8,11 +8,19 @@ export class Geometry{
     _position
     _type
     _color
+    _rotateRad = 0
 
     constructor(position, type){
         this._position = position
         this._type = type
         this._color = Colors.BLUE
+    }
+
+    get X(){
+        return this.Position.X
+    }
+    get Y(){
+        return this.Position.Y
     }
 
     get Color(){
@@ -23,6 +31,14 @@ export class Geometry{
     }
     get Position(){
         return this._position
+    }
+
+    get RotateAngle(){
+        return this._rotateRad * 180/Math.PI
+    }
+
+    set RotateAngle(angle){
+        this._rotateRad = angle*Math.PI/180
     }
 
     set Position(position){
@@ -36,17 +52,17 @@ export class Geometry{
         throw new NotImplementError();
     }
 
-    left(){
+    get left(){
         throw new NotImplementError();
     }
-    right(){
+    get right(){
         throw new NotImplementError();
     }
 
-    top(){
+    get top(){
         throw new NotImplementError();
     }
-    down(){
+    get down(){
         throw new NotImplementError();
     }
 
@@ -80,21 +96,28 @@ export class Rect extends Geometry{
 
 
     draw(context){
+        context.save();
+
+        context.translate(this.X, this.Y);
+        context.rotate(this._rotateRad);
+
         context.fillStyle = this.Color
-        context.fillRect(this.left(),this.top(), this.Width,this.Height)
+        context.fillRect(-this.Width/2, -this.Height/2, this.Width,this.Height)
+
+        context.restore();
     }
 
-    left(){
+    get left(){
         return this.Position.X - this.Width/2
     }
-    right(){
+    get right(){
         return this.Position.X + this.Width/2
     }
 
-    top(){
+    get top(){
         return this.Position.Y - this.Height/2
     }
-    down(){
+    get down(){
         return this.Position.Y + this.Height/2
     }
 }
@@ -124,17 +147,17 @@ export class Circle extends Geometry{
         context.stroke()
     }
 
-    left(){
+    get left(){
         return this.Position.X - this.Radius
     }
-    right(){
+    get right(){
         return this.Position.X + this.Radius
     }
 
-    top(){
+    get top(){
         return this.Position.Y - this.Radius
     }
-    down(){
+    get down(){
         return this.Position.Y + this.Radius
     }
 }

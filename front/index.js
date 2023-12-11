@@ -6,14 +6,9 @@ import {Position} from "./Engine/Position.js"
 window.addEventListener('load', ()=>{
     // const socket = new WebSocketHandler("ws://localhost:3000");
     const graphics = new Graphics()
-    const p = new Position(0,0)
-    const rect = new Rect(p,20,20)
-    const p2 = new Position(rect.right(),p.Y)
-
-    const circle = new Circle(p2,50)
-
+    const p = graphics.Center
+    const rect = new Rect(p,50,20)
     graphics.addObject(rect)
-    graphics.addObject(circle)
 
     graphics.draw()
 })
