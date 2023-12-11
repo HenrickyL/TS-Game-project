@@ -12,8 +12,3 @@ const webSocketManager = new WebSocketManager(server);
 server.listen(3000, () => {
     console.log('Servidor WebSocket está ouvindo na porta 3000');
 });
-
-
-setInterval(()=>{
-    webSocketManager.sendMessageToAll("EAI", null)  
-}, 2000)
