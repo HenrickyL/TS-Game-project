@@ -1,3 +1,5 @@
+import { Player } from "@core/entities/Player";
+
 export interface ISocketManeger<ISocket>{
   handleConnections(): void;
 
@@ -6,5 +8,5 @@ export interface ISocketManeger<ISocket>{
   
   onMessage(socket: ISocket, message: string): void;
   sendMessageToAll(message: string, data: any): void
-  getClientIdBySocket(socket: ISocket): string | null
+  getPlayerBySocket(socket: ISocket): Player  | null
 }

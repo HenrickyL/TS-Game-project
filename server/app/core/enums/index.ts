@@ -1,2 +1,7 @@
 import {SocketEvent} from "./SocketEvent"
-export {SocketEvent}
+import {PlayerStatus} from './PlayerStatus'
+
+export {
+    SocketEvent,
+    PlayerStatus
+}
