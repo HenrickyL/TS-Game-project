@@ -2,7 +2,7 @@ import {NotImplementError} from '../Errors/index.js'
 
 import {GeometryType} from '../Engine/enums/index.js'
 
-import {Colors} from './Colors.js'
+import {Color} from './Colors.js'
 
 export class Geometry{
     _position
@@ -13,7 +13,7 @@ export class Geometry{
     constructor(position, type){
         this._position = position
         this._type = type
-        this._color = Colors.BLUE
+        this._color = Color.BLUE
     }
 
     get X(){
@@ -23,7 +23,7 @@ export class Geometry{
         return this.Position.Y
     }
 
-    get Color(){
+    get color(){
         return this._color
     }
     get Type(){
@@ -31,6 +31,13 @@ export class Geometry{
     }
     get Position(){
         return this._position
+    }
+    get alpha(){
+        return this.Color.alpha
+    }
+
+    set alpha(a){
+        this._color.alpha = a
     }
 
     get RotateAngle(){
@@ -44,7 +51,7 @@ export class Geometry{
     set Position(position){
         this._position = position
     }
-    set Color(color){
+    set color(color){
         this._color = color
     }
 
@@ -101,7 +108,7 @@ export class Rect extends Geometry{
         context.translate(this.X, this.Y);
         context.rotate(this._rotateRad);
 
-        context.fillStyle = this.Color
+        context.fillStyle = this.color.RGBA
         context.fillRect(-this.Width/2, -this.Height/2, this.Width,this.Height)
 
         context.restore();
@@ -143,7 +150,7 @@ export class Circle extends Geometry{
     draw(context){
         context.beginPath()
         context.arc(this.Position.X,this.Position.Y, this.#radius, 0 , Math.PI*2,  false)
-        context.strokeStyle = this.Color
+        context.strokeStyle = this.color.RGBA
         context.stroke()
     }
 
