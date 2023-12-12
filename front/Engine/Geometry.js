@@ -140,26 +140,48 @@ export class Rect extends Geometry{
 
 export class Circle extends Geometry{
     #radius = 10;
+    #isFill
+    #borderColor
     
-    constructor(position, radius) {
+    constructor(position, radius, isFill = true) {
         super(position, GeometryType.CIRCLE)
         this.#radius = radius
+        this.#isFill = isFill
+        this.#borderColor = Color.BLACK
     }
 
     set Radius(radius){
         this.#radius = radius
     }
-
     
     get Radius() {
         return this.#radius;
     }
 
+    get borderColor(){
+        return this.#borderColor
+    }
+
+    set borderColor(color){
+        this.#borderColor = color
+    }
+
+    get isFill(){
+        return this.#isFill
+    }
+
+    set isFill(fill){
+        this.#isFill = fill
+    }
+
     draw(context){
         context.beginPath()
         context.arc(this.Position.X,this.Position.Y, this.#radius, 0 , Math.PI*2,  false)
-        context.strokeStyle = this.color.RGBA
+        context.strokeStyle = this.borderColor.RGBA
         context.stroke()
+        context.fillStyle = this.color.RGBA
+        if(this.#isFill)
+            context.fill()
     }
 
     get left(){
