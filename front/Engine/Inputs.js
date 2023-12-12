@@ -49,6 +49,14 @@ export class Input {
         return this.#ctrl
     }
 
+    get mousePosition(){
+        return this.#mousePosition
+    }
+
+    get mouseClick(){
+        return this.#mouseClickPosition
+    }
+
     keyDown(keyCode){
         return this.#keys[keyCode]
     }

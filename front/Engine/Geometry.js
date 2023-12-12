@@ -25,6 +25,10 @@ export class Geometry{
         return this.position.y
     }
 
+    set position(pos){
+        this._position = pos
+    }
+
     get color(){
         return this._color
     }

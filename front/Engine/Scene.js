@@ -110,7 +110,6 @@ export class Scene {
     }
 
     collisionRectPoint(rect, point) {
-        console.log(rect, point)
         return (
             point.x >= rect.left &&
             point.x <= rect.right &&
@@ -154,34 +153,24 @@ export class Scene {
 
     collision(objA, objB) {
         if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.RECTANGLE) {
-            console.log("C-RR")
             return this.collisionRectRect(objA, objB);
         } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.CIRCLE) {
-            console.log("C-CC")
             return this.collisionCircleCircle(objA, objB);
         } else if (objA.type === GeometryType.POINT && objB.type === GeometryType.POINT) {
-            console.log("C-PP")
             return this.collisionPointPoint(objA.position, objB.position);
         } else if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.POINT) {
-            console.log("C-RP")
             return this.collisionRectPoint(objA, objB.position);
         } else if (objA.type === GeometryType.POINT && objB.type === GeometryType.RECTANGLE) {
-            console.log("C-PR")
             return this.collisionRectPoint(objB, objA.position);
         } else if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.CIRCLE) {
-            console.log("C-RC")
             return this.collisionRectCircle(objA, objB);
         } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.RECTANGLE) {
-            console.log("C-CR")
             return this.collisionRectCircle(objB, objA);
         } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.POINT) {
-            console.log("C-CP")
             return this.collisionCirclePoint(objA, objB.position);
         }else if (objA.type === GeometryType.POINT && objB.type === GeometryType.CIRCLE) {
-            console.log("C-PC")
             return this.collisionCirclePoint(objB, objA.position);
         }
-
         return false;
     }
 }
