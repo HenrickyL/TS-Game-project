@@ -6,3 +6,9 @@ export const GeometryType = {
     POLYGON: 'Polygon',
     ARC: 'Arc',
 }
+
+
+export const ObjectGroup = {
+    STATIC: "STATIC",// não colidem entre si
+    MOVING: "MOVING" 
+}

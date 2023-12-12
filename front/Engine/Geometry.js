@@ -13,25 +13,25 @@ export class Geometry{
     _rotateRad = 0
 
     constructor(position, type){
-        this._position = new Position(position.X, position.Y)
+        this._position = new Position(position.x, position.x)
         this._type = type
         this._color = Color.BLUE
     }
 
-    get X(){
-        return this.Position.X
+    get x(){
+        return this.position.x
     }
-    get Y(){
-        return this.Position.Y
+    get y(){
+        return this.position.y
     }
 
     get color(){
         return this._color
     }
-    get Type(){
+    get type(){
         return this._type
     }
-    get Position(){
+    get position(){
         return this._position
     }
     get alpha(){
@@ -49,10 +49,7 @@ export class Geometry{
     set RotateAngle(angle){
         this._rotateRad = angle*Math.PI/180
     }
-
-    set Position(position){
-        this._position = position
-    }
+    
     set color(color){
         this._color = color
     }
@@ -71,14 +68,14 @@ export class Geometry{
     get top(){
         throw new NotImplementError();
     }
-    get down(){
+    get bottom(){
         throw new NotImplementError();
     }
 
 
     moveTo(position){
-        this._position.X = position.X
-        this._position.Y = position.Y
+        this._position.x = position.x
+        this._position.y = position.y
     }
 
 }
@@ -113,7 +110,7 @@ export class Rect extends Geometry{
     draw(context){
         context.save();
 
-        context.translate(this.X, this.Y);
+        context.translate(this.x, this.y);
         context.rotate(this._rotateRad);
 
         context.fillStyle = this.color.RGBA
@@ -123,17 +120,17 @@ export class Rect extends Geometry{
     }
 
     get left(){
-        return this.Position.X - this.Width/2
+        return this.position.x - this.Width/2
     }
     get right(){
-        return this.Position.X + this.Width/2
+        return this.position.x + this.Width/2
     }
 
     get top(){
-        return this.Position.Y - this.Height/2
+        return this.position.y - this.Height/2
     }
-    get down(){
-        return this.Position.Y + this.Height/2
+    get bottom(){
+        return this.position.y + this.Height/2
     }
 }
 
@@ -150,11 +147,11 @@ export class Circle extends Geometry{
         this.#borderColor = Color.BLACK
     }
 
-    set Radius(radius){
-        this.#radius = radius
+    set radius(r){
+        this.#radius = r
     }
     
-    get Radius() {
+    get radius() {
         return this.#radius;
     }
 
@@ -176,7 +173,7 @@ export class Circle extends Geometry{
 
     draw(context){
         context.beginPath()
-        context.arc(this.Position.X,this.Position.Y, this.#radius, 0 , Math.PI*2,  false)
+        context.arc(this.position.x,this.position.y, this.#radius, 0 , Math.PI*2,  false)
         context.strokeStyle = this.borderColor.RGBA
         context.stroke()
         context.fillStyle = this.color.RGBA
@@ -185,17 +182,17 @@ export class Circle extends Geometry{
     }
 
     get left(){
-        return this.Position.X - this.Radius
+        return this.position.x - this.radius
     }
     get right(){
-        return this.Position.X + this.Radius
+        return this.position.x + this.radius
     }
 
     get top(){
-        return this.Position.Y - this.Radius
+        return this.position.y - this.radius
     }
-    get down(){
-        return this.Position.Y + this.Radius
+    get bottom(){
+        return this.position.y + this.radius
     }
 }
 
@@ -232,8 +229,8 @@ export class Line extends Geometry{
     draw(context){
 
         context.beginPath()
-        context.moveTo(this.start.X,this.start.Y)
-        context.lineTo(this.end.X,this.end.Y)
+        context.moveTo(this.start.x,this.start.y)
+        context.lineTo(this.end.x,this.end.y)
 
         context.strokeStyle = this.color.RGBA
         context.stroke()
@@ -242,8 +239,8 @@ export class Line extends Geometry{
     set RotateAngle(angle){
         this._rotateRad = -angle*Math.PI/180
         this.#rotate(this._rotateRad);
-        this.#initialPosition = Position.rotatePoint(this.#initialPosition, this.Position, this._rotateRad)
-        this.#finalPosition = Position.rotatePoint(this.#finalPosition, this.Position, this._rotateRad)
+        this.#initialPosition = Position.rotatePoint(this.#initialPosition, this.position, this._rotateRad)
+        this.#finalPosition = Position.rotatePoint(this.#finalPosition, this.position, this._rotateRad)
     }
 
     #rotate(angle) {
@@ -257,32 +254,32 @@ export class Line extends Geometry{
     }
 
     moveTo(position){
-        const dx = position.X - this.Position.X;
-        const dy = position.Y - this.Position.Y;
+        const dx = position.x - this.position.x;
+        const dy = position.y - this.position.y;
 
-        this.#initialPosition.X += dx;
-        this.#initialPosition.Y += dy;
+        this.#initialPosition.x += dx;
+        this.#initialPosition.y += dy;
 
-        this.#finalPosition.X += dx;
-        this.#finalPosition.Y += dy;
+        this.#finalPosition.x += dx;
+        this.#finalPosition.y += dy;
 
-        const newCenter = new Position((this.#initialPosition.X + this.#finalPosition.X) / 2, (this.#initialPosition.Y + this.#finalPosition.Y) / 2);
+        const newCenter = new Position((this.#initialPosition.x + this.#finalPosition.x) / 2, (this.#initialPosition.y + this.#finalPosition.y) / 2);
 
-        this.Position = newCenter;
+        this.position = newCenter;
     }
 
     get left(){
-        return this.#initialPosition.X < this.#finalPosition.X ? this.#initialPosition.X :this.#finalPosition.X
+        return this.#initialPosition.x < this.#finalPosition.x ? this.#initialPosition.x :this.#finalPosition.x
     }
     get right(){
-        return this.#initialPosition.X > this.#finalPosition.X ? this.#initialPosition.X :this.#finalPosition.X
+        return this.#initialPosition.x > this.#finalPosition.x ? this.#initialPosition.x :this.#finalPosition.x
     }
 
     get top(){
-        return this.#initialPosition.Y < this.#finalPosition.Y ? this.#initialPosition.Y :this.#finalPosition.Y
+        return this.#initialPosition.y < this.#finalPosition.y ? this.#initialPosition.y :this.#finalPosition.y
     }
-    get down(){
-        return this.#initialPosition.Y > this.#finalPosition.Y ? this.#initialPosition.Y :this.#finalPosition.Y
+    get bottom(){
+        return this.#initialPosition.y > this.#finalPosition.y ? this.#initialPosition.y :this.#finalPosition.y
     }
 }
 
@@ -314,7 +311,7 @@ export class Point extends Geometry {
 
     draw(context) {
         context.save();
-        context.translate(this.X, this.Y);
+        context.translate(this.x, this.y);
         context.fillStyle = this.color.RGBA;
 
         if (this.#isSquare) {
@@ -337,13 +334,13 @@ export class Polygon extends Geometry{
     #borderColor
 
     constructor(position, points = [], borderColor = Color.BLACK) {
-        super(position, GeometryType.POINT);
+        super(position, GeometryType.POLYGON);
         this.#points = points;
         this.#borderColor = borderColor
     }
 
     addPoint(position){
-        if(!this.#points.some(pos => pos.X === position.X && pos.Y === position.Y))
+        if(!this.#points.some(pos => pos.x === position.x && pos.y === position.y))
             this.#points.push(position)
     }
 
@@ -353,12 +350,12 @@ export class Polygon extends Geometry{
         context.beginPath();
         this.#points.forEach((point, i)=>{
             if(i == 0){
-                context.moveTo(point.X,point.Y)
+                context.moveTo(point.x,point.y)
             }else{
-                context.lineTo(point.X,point.Y)
+                context.lineTo(point.x,point.y)
             }
         })
-        context.lineTo(this.#points[0].X,this.#points[0].Y)
+        context.lineTo(this.#points[0].x,this.#points[0].y)
         context.strokeStyle = this.#borderColor.RGBA;
         context.stroke()
         context.fillStyle = this.color.RGBA;

@@ -7,19 +7,19 @@ export class Position{
         this.#y = _y
     }
 
-    get X(){
+    get x(){
         return this.#x;
     }
-    get Y(){
+    get y(){
         return this.#y;
     }
 
-    set X(x){
-        this.#x = x
+    set x(xx){
+        this.#x = xx
     }
 
-    set Y(y){
-        this.#y = y
+    set y(yy){
+        this.#y = yy
     }
 
     static centerTo(p1, p2){
