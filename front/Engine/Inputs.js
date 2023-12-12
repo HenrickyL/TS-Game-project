@@ -101,7 +101,6 @@ export class Input {
         this.#mouseClickPosition.x = mouseX;
         this.#mouseClickPosition.y = mouseY;
         this.#onClick = true
-        console.log(this.#mouseClickPosition)
     }
 
     #onMouseClickUp(event) {
@@ -118,7 +117,6 @@ export class Input {
         }
 
         this.#onClick = false
-        console.log(this.#mouseClickPosition)
     }
 
     #onMouseWheel(event){
@@ -132,6 +130,4 @@ export class Input {
         }
         this.#lastMouseWheelTime = currentTime;
     }
-
-    // Outras funções para lidar com eventos de entrada, se necessário
 }
