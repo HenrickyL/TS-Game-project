@@ -329,3 +329,42 @@ export class Point extends Geometry {
         context.restore()
     }
 }
+
+
+
+export class Polygon extends Geometry{
+    #points = []
+    #borderColor
+
+    constructor(position, points = [], borderColor = Color.BLACK) {
+        super(position, GeometryType.POINT);
+        this.#points = points;
+        this.#borderColor = borderColor
+    }
+
+    addPoint(position){
+        if(!this.#points.some(pos => pos.X === position.X && pos.Y === position.Y))
+            this.#points.push(position)
+    }
+
+    draw(context) {
+        if(this.#points.length<3)return
+
+        context.beginPath();
+        this.#points.forEach((point, i)=>{
+            if(i == 0){
+                context.moveTo(point.X,point.Y)
+            }else{
+                context.lineTo(point.X,point.Y)
+            }
+        })
+        context.lineTo(this.#points[0].X,this.#points[0].Y)
+        context.strokeStyle = this.#borderColor.RGBA;
+        context.stroke()
+        context.fillStyle = this.color.RGBA;
+        context.fill()
+        context.closePath();
+    }
+
+    
+}

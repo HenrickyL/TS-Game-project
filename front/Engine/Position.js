@@ -2,7 +2,7 @@ export class Position{
     #x = 0
     #y = 0
 
-    constructor(_x, _y){
+    constructor(_x=0, _y=0){
         this.#x = _x
         this.#y = _y
     }
