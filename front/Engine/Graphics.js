@@ -21,6 +21,9 @@ export class Graphics{
     get Center(){
         return this.#center
     }
+    get canvas(){
+        return this.#canvas
+    }
 
     initialize(){
        
