@@ -7,8 +7,6 @@ export class Graphics{
     #height
     #center
 
-    #objects = []
-    
     constructor(width = 800, height=600){
         this.#height = height
         this.#width = width
@@ -24,35 +22,13 @@ export class Graphics{
     get canvas(){
         return this.#canvas
     }
-
-    initialize(){
-       
+    get context(){
+        return this.#context
     }
 
-    update(){
-
-    }
-
-    draw(){
-        this.#clear()
-
-        this.#objects.forEach(obj =>{
-            obj.draw(this.#context)
-        })
-
-    }
-
-
-    addObject(object){
-        this.#objects.push(object)
-    }
-
-
-
-    #clear(){
+    clear(){
         this.#context.clearRect(0,0, this.#width, this.#height)
     }
-
     #resize(){
         this.#canvas.width = this.#width
         this.#canvas.height = this.#height

@@ -24,5 +24,6 @@ export const InputKeys = {
     S: 83,
     D: 68,
     ENTER: 13,
-    ESCAPE: 27
+    ESCAPE: 27,
+    PAUSE: 19,
 };
