@@ -69,13 +69,13 @@ export class Engine{
     }
 
     #mainLoopVariable   = (timestamp)=>{
-        // const deltaTime = (timestamp - this.#lastTime) / 1000;
         const elapsed = timestamp - this.#lastTime;
         this.#lastTime = timestamp;
         this.#elapsed += elapsed;
         this.#frames++;
         if (this.#elapsed > 1000) {
-            this.#fps = Math.fl(this.#frames / this.#elapsed) * 1000;
+            this.#fps = Math.floor((this.#frames / this.#elapsed) * 1000);
+            // console.log(`FPS: ${this.#fps}`);
             this.#frames = 0;
             this.#elapsed = 0;
         }
