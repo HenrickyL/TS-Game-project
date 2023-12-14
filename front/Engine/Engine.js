@@ -54,11 +54,7 @@ export class Engine{
         if(!this.#game)
             throw new GameNotDefinedInEngineError();
         this.#game.init(this.context, this.input);
-
-        if(this.#input.keyPress(InputKeys.PAUSE)){
-            this.#onPause  = !this.#onPause 
-            console.log("pause")
-        }
+        
         //gameLoop
         requestAnimationFrame(
             this.#isVariableRate?this.#mainLoopVariable : this.#mainLoopConstant
@@ -68,6 +64,12 @@ export class Engine{
         // this.#game.finalize();
     }
 
+    #verifyPause(){
+        if(this.input.keyPress(InputKeys.PAUSE)){
+            this.#onPause  = !this.#onPause 
+            console.log("pause")
+        }
+    }
     #mainLoopVariable   = (timestamp)=>{
         const elapsed = timestamp - this.#lastTime;
         this.#lastTime = timestamp;
@@ -96,6 +98,7 @@ export class Engine{
 
 
     #mainLoop(){
+        this.#verifyPause()
         if(!this.#onPause){
             this.#game.update()
             this.#graphics.clear()
