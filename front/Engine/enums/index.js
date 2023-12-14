@@ -27,3 +27,12 @@ export const InputKeys = {
     ESCAPE: 27,
     PAUSE: 19,
 };
+
+
+
+export const FrameRate = {
+    FPS_30: 30,
+    FPS_60: 60,
+    FPS_75: 75,
+    FPS_120: 120
+};

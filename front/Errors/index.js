@@ -1,10 +1,10 @@
 export class ThrowError extends Error{
     #name 
-    #mensagem
+    #message
     constructor(message){
-        super(mensagem);
-        this.name = this.constructor.name;
-        this.mensagem = mensagem;
+        super(message);
+        this.#name = this.constructor.name;
+        this.#message = message;
     }
 }
 
@@ -12,5 +12,18 @@ export class ThrowError extends Error{
 export class NotImplementError extends ThrowError{
     constructor(){
         super("Method not implement")
+    }
+}
+
+
+export class GameNotDefinedInEngineError  extends ThrowError{
+    constructor(){
+        super("No game provided. Please provide a valid game object to Engine.")
+    }
+}
+
+export class InputCanvasNotDefinedError  extends ThrowError{
+    constructor(){
+        super("No canvas input provided. Please provide a valid canvas object Input with 'setCanvas'.")
     }
 }

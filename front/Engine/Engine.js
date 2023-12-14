@@ -1,3 +1,4 @@
+import { GameNotDefinedInEngineError } from "../Errors/index.js"
 import { Graphics } from "./Graphics.js"
 import { Input } from "./Input.js"
 import { Timer } from "./Timer.js"
@@ -14,6 +15,8 @@ export class Engine{
     #screenWidth = 800
     #screenHeight = 600
     #onPause = false
+    #frames = 0
+    #elapsed = 0
 
     constructor(isVariableRate = true){
         this.#isVariableRate = isVariableRate
@@ -30,22 +33,32 @@ export class Engine{
 
     set fps(_fpd){
         this.#fps = _fpd
+        this.#frameDuration = 1000/this.#fps
     }
 
     get fps(){
         return this.#fps
     }
 
+    get context(){
+        return this.#graphics.context
+    }
+
+    get input(){
+        return this.#input
+    }
+
 
     #loop(){
         this.#timer.startTimer()
-        // this.#game.init();
+        if(!this.#game)
+            throw new GameNotDefinedInEngineError();
+        this.#game.init(this.context, this.input);
 
         if(this.#input.keyPress(InputKeys.PAUSE)){
             this.#onPause  = !this.#onPause 
             console.log("pause")
         }
-
         //gameLoop
         requestAnimationFrame(
             this.#isVariableRate?this.#mainLoopVariable : this.#mainLoopConstant
@@ -55,16 +68,22 @@ export class Engine{
         // this.#game.finalize();
     }
 
-    #mainLoopConstant = (timestamp)=>{
-        const deltaTime = (timestamp - this.#lastTime) / 1000;
-
-        this.#mainLoop()
-
+    #mainLoopVariable   = (timestamp)=>{
+        // const deltaTime = (timestamp - this.#lastTime) / 1000;
+        const elapsed = timestamp - this.#lastTime;
         this.#lastTime = timestamp;
-        requestAnimationFrame(this.#mainLoopConstant);
+        this.#elapsed += elapsed;
+        this.#frames++;
+        if (this.#elapsed > 1000) {
+            this.#fps = Math.fl(this.#frames / this.#elapsed) * 1000;
+            this.#frames = 0;
+            this.#elapsed = 0;
+        }
+        this.#mainLoop()
+        requestAnimationFrame(this.#mainLoopVariable);
     }
 
-    #mainLoopVariable = (timestamp)=>{
+    #mainLoopConstant = (timestamp)=>{
         const currentTime = timestamp || 0;
         const elapsed = currentTime - this.#lastTime;
       
@@ -72,15 +91,15 @@ export class Engine{
             this.#mainLoop()
             this.#lastTime = currentTime - (elapsed % this.#frameDuration);
         }
-        requestAnimationFrame(this.#mainLoopVariable);
+        requestAnimationFrame(this.#mainLoopConstant);
     }
 
 
     #mainLoop(){
-        if(this.#onPause){
-            // this.#game.update()
+        if(!this.#onPause){
+            this.#game.update()
             this.#graphics.clear()
-            // this.#game.draw(this.#graphics.context)
+            this.#game.draw(this.#graphics.context)
         }
     }
 }

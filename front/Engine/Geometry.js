@@ -82,6 +82,16 @@ export class Geometry{
         this._position.y = position.y
     }
 
+    moveTo(x, y){
+        this._position.x = x
+        this._position.y = y
+    }
+
+    translateTo(dx, dy){
+        this._position.x += dx
+        this._position.y += dy
+    }
+
 }
 
 
