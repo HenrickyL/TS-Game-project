@@ -5,17 +5,16 @@ import {GeometryType} from '../Engine/enums/index.js'
 import {Color} from './Colors.js'
 import {Position} from './Position.js'
 
-
 export class Geometry{
     _position
     _type
-    _color
+    _color = Color.BLUE
     _rotateRad = 0
 
-    constructor(position, type){
+    constructor(position, type, color = Color.BLUE){
         this._position = new Position(position.x, position.x)
         this._type = type
-        this._color = Color.BLUE
+        this._color = color
     }
 
     get x(){
