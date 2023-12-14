@@ -1,18 +1,17 @@
-export class Object{
+import {Movable} from "./Movable"
+
+
+export class Object extends Movable{
     #bbox //Geometry colision
-    #position
 
     constructor(position, bbox){
-        this.#position = position
+        super(position)
         this.#bbox = bbox
-        this.#bbox.moveTo(this.#position)
+        this.#bbox.position = this._position
     }
+    
     get bbox(){
         return this.#bbox
-    }
-
-    get position(){
-        return this.#position
     }
 
     update(){}
