@@ -4,7 +4,17 @@
       "module": "commonjs", // Módulo comum para uso no Node.js
       "strict": true, // Habilita verificações de tipo estritas
       "outDir": "./dist", // Diretório de saída para os arquivos compilados (opcional)
-      "rootDir": "." // Diretório de origem dos arquivos TypeScript (ajuste conforme sua estrutura)
+      "rootDir": ".", // Diretório de origem dos arquivos TypeScript (ajuste conforme sua estrutura)
+      "baseUrl": "./",
+      "esModuleInterop": true,
+      "paths": {
+        // "*": ["./"],
+        "@modules/*":     ["./app/modules/*"],
+        "@core/*":        ["./app/core/*"],
+        "@enums/*":       ["./app/core/enums/*"],
+        "@infra/*":       ["./app/infra/*"],
+        "@config/*":      ["./config/*"],
+      },
     },
     "include": [
       "./**/*.ts" // Padrão para incluir todos os arquivos TypeScript na pasta "src" e subpastas
