@@ -1,4 +1,4 @@
-import {Movable} from "./Movable"
+import {Movable} from "./Middleware/Movable"
 
 
 export class Object extends Movable{
@@ -9,7 +9,7 @@ export class Object extends Movable{
         this.#bbox = bbox
         this.#bbox.position = this._position
     }
-    
+
     get bbox(){
         return this.#bbox
     }

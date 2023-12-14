@@ -4,7 +4,7 @@ import {GeometryType} from '../Engine/enums/index.js'
 
 import {Color} from './Colors.js'
 import {Position} from './Position.js'
-import {Movable} from './Movable.js'
+import {Movable} from './Middleware/Movable.js'
 export class Geometry extends Movable{
     _type
     _color = Color.BLUE

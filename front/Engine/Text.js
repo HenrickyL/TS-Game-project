@@ -1,5 +1,5 @@
 import { Color } from "./Colors.js";
-import { Movable } from './Movable.js';
+import { Movable } from './Middleware/Movable.js';
 
 export class Text extends Movable {
     #text;

@@ -1,4 +1,4 @@
-import { Position } from "./Position.js";
+import { Position } from "../Position.js";
 
 export class Movable {
     _rotateRad = 0
