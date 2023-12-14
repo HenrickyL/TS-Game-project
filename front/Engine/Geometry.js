@@ -4,29 +4,17 @@ import {GeometryType} from '../Engine/enums/index.js'
 
 import {Color} from './Colors.js'
 import {Position} from './Position.js'
-
-export class Geometry{
-    _position
+import {Movable} from './Movable.js'
+export class Geometry extends Movable{
     _type
     _color = Color.BLUE
-    _rotateRad = 0
 
     constructor(position, type, color = Color.BLUE){
-        this._position = new Position(position.x, position.x)
+        super(position)
         this._type = type
         this._color = color
     }
 
-    get x(){
-        return this.position.x
-    }
-    get y(){
-        return this.position.y
-    }
-
-    set position(pos){
-        this._position = pos
-    }
 
     get color(){
         return this._color
@@ -34,9 +22,7 @@ export class Geometry{
     get type(){
         return this._type
     }
-    get position(){
-        return this._position
-    }
+   
     get alpha(){
         return this.Color.alpha
     }
@@ -45,14 +31,6 @@ export class Geometry{
         this._color.alpha = a
     }
 
-    get RotateAngle(){
-        return this._rotateRad * 180/Math.PI
-    }
-
-    set RotateAngle(angle){
-        this._rotateRad = angle*Math.PI/180
-    }
-    
     set color(color){
         this._color = color
     }
@@ -74,23 +52,6 @@ export class Geometry{
     get bottom(){
         throw new NotImplementError();
     }
-
-
-    moveTo(position){
-        this._position.x = position.x
-        this._position.y = position.y
-    }
-
-    moveTo(x, y){
-        this._position.x = x
-        this._position.y = y
-    }
-
-    translateTo(dx, dy){
-        this._position.x += dx
-        this._position.y += dy
-    }
-
 }
 
 

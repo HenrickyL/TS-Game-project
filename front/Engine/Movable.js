@@ -7,6 +7,18 @@ export class Movable {
         this._position = new Position(position.x, position.y)
     }
 
+    get x(){
+        return this._position.x
+    }
+
+    get y(){
+        return this._position.y
+    }
+
+    set position(pos){
+        this._position = pos
+    }
+
     get position() {
         return this._position;
     }
@@ -29,7 +41,7 @@ export class Movable {
         this._position.y = y
     }
 
-    translateTo(dx, dy){
+    translateTo(dx, dy=0){
         this._position.x += dx
         this._position.y += dy
     }
