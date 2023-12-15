@@ -27,3 +27,10 @@ export class InputCanvasNotDefinedError  extends ThrowError{
         super("No canvas input provided. Please provide a valid canvas object Input with 'setCanvas'.")
     }
 }
+
+
+export class InvalidArgumentError  extends ThrowError{
+    constructor(message = ""){
+        super(`Invalid Argument. ${message}`)
+    }
+}

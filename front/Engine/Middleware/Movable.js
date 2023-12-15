@@ -1,10 +1,27 @@
+import { InvalidArgumentError } from "../../Errors/index.js";
 import { Position } from "../Position.js";
+import {Vector} from '../Vector.js'
 
 export class Movable {
     _rotateRad = 0
     _position;
-    constructor(position = new Position()) {
+    _initialPosition
+    _speed = Vector.Zero;
+    _momentum = Vector.Zero
+    constructor(position = new Position(), speed = Vector.Zero) {
         this._position = new Position(position.x, position.y)
+        this._initialPosition = new Position(position.x, position.y)
+        this._speed = speed
+    }
+
+    get initialPosition(){
+        return this._initialPosition
+    }
+    get speed(){
+        return this._speed
+    }
+    set speed(vec){
+        this._speed = vec
     }
 
     get x(){
@@ -45,4 +62,15 @@ export class Movable {
         this._position.x += dx
         this._position.y += dy
     }
+
+    translateTo(delta){
+        if(delta instanceof Vector){
+            this._position.x += delta.x
+            this._position.y += delta.y
+        }else{
+            throw new InvalidArgumentError("Expected a Vector.")
+        }
+    }
+
+    
 }

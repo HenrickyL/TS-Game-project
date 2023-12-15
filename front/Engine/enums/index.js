@@ -36,3 +36,8 @@ export const FrameRate = {
     FPS_75: 75,
     FPS_120: 120
 };
+
+export const RigidObjectType = {
+    ELASTIC: "ELASTIC",
+    DEFAULT: "DEFAULT"
+}

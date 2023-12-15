@@ -111,6 +111,8 @@ export class Input {
         this.#onClick = true
     }
 
+    get onClick(){return this.#onClick}
+
     #onMouseClickUp(event) {
         const mouseX = event.clientX - this.#offsetX; // Posição X do mouse no canvas
         const mouseY = event.clientY - this.#offsetY; // Posição Y do mouse no canvas
