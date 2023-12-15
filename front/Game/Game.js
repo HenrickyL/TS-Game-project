@@ -26,6 +26,10 @@ export class Game{
     #timerCount
     #stringAux = ""
 
+    #ball
+    #player
+    #opponent
+
     #btStart
     constructor(id){
         this.#id = id
@@ -66,7 +70,8 @@ export class Game{
     }
 
     #initBall(){
-        this.#scene.add(new Ball(this.#graphics.middleCenter))
+        this.#ball = new Ball(this.#graphics.middleCenter)
+        this.#scene.add(this.#ball)
     }
 
     init(graphics, input){
@@ -103,6 +108,7 @@ export class Game{
                 this.#pause = false
                 this.#timer.resetTimer()
                 this.#timerCount.size = 30
+                this.#ball.start()
             }else{
                 this.#timerCount.text = `${(this.#timeToGo - Math.floor(this.#timer.getElapsedSeconds())).toString().padStart(3,'0')}`
             }
