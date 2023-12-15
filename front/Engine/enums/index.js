@@ -41,3 +41,14 @@ export const RigidObjectType = {
     ELASTIC: "ELASTIC",
     DEFAULT: "DEFAULT"
 }
+
+
+
+export const SocketEvent = {
+    MESSAGE : 'message',
+    CONNECTION : 'connection',
+    CLOSE : 'close',
+    ERROR : 'error',
+    START : 'start',
+    ACTION : 'action',
+}

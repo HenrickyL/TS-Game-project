@@ -3,4 +3,6 @@ export enum SocketEvent {
     CONNECTION = 'connection',
     CLOSE = 'close',
     ERROR = 'error',
+    START = 'start',
+    ACTION = 'action',
   }
