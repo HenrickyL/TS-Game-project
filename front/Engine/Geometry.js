@@ -59,11 +59,22 @@ export class Geometry extends Movable{
 export class Rect extends Geometry{
     #width;
     #height;
+    #lineSize = 2
+    #strokeColor = Color.BLACK
+
     
-    constructor(position, width, height) {
-        super(position, GeometryType.RECTANGLE)
+    constructor(position, width, height, color = Color.GREEN) {
+        super(position, GeometryType.RECTANGLE, color)
         this.#width = width
         this.#height = height
+    }
+
+    set lineSize(size){
+        this.#lineSize = size
+    }
+
+    set strokeColor(color){
+        this.#strokeColor = color
     }
 
     set Height(height){
@@ -90,6 +101,11 @@ export class Rect extends Geometry{
         context.fillStyle = this.color.RGBA
         context.fillRect(-this.Width/2, -this.Height/2, this.Width,this.Height)
 
+        context.lineWidth = this.#lineSize; // largura da borda
+        context.strokeStyle = this.#strokeColor.RGBA; // cor da borda
+
+        context.strokeRect(-this.Width / 2, -this.Height / 2, this.Width, this.Height);
+
         context.restore();
     }
 
@@ -114,8 +130,8 @@ export class Circle extends Geometry{
     #isFill
     #borderColor
     
-    constructor(position, radius, isFill = true) {
-        super(position, GeometryType.CIRCLE)
+    constructor(position, radius, color = Color.RED, isFill = true) {
+        super(position, GeometryType.CIRCLE, color)
         this.#radius = radius
         this.#isFill = isFill
         this.#borderColor = Color.BLACK
@@ -176,8 +192,8 @@ export class Line extends Geometry{
     #initialPosition
     #finalPosition
     
-    constructor(start, end) {
-        super(Position.centerTo(start, end), GeometryType.LINE)
+    constructor(start, end, color = Color.BLACK) {
+        super(Position.centerTo(start, end), GeometryType.LINE, color)
         this.#initialPosition = start
         this.#finalPosition = end
 
@@ -262,8 +278,8 @@ export class Point extends Geometry {
     #size = 5;
     #isSquare = true;
 
-    constructor(position, isSquare = true) {
-        super(position, GeometryType.POINT);
+    constructor(position, color = Color.YELLOW, isSquare = true) {
+        super(position, GeometryType.POINT, color);
         this.#isSquare = isSquare;
     }
 

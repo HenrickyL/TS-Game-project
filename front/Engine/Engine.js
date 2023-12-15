@@ -53,7 +53,7 @@ export class Engine{
         this.#timer.startTimer()
         if(!this.#game)
             throw new GameNotDefinedInEngineError();
-        this.#game.init(this.context, this.input);
+        this.#game.init(this.#graphics, this.input);
         
         //gameLoop
         requestAnimationFrame(
@@ -102,7 +102,7 @@ export class Engine{
         if(!this.#onPause){
             this.#game.update()
             this.#graphics.clear()
-            this.#game.draw(this.#graphics.context)
+            this.#game.draw()
         }
     }
 }

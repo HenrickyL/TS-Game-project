@@ -1,4 +1,4 @@
-class WebSocketHandler {
+export class WebSocketHandler {
     constructor(server) {
       this.socket = new WebSocket(server); // Substitua pelo endereço do servidor
       this.socket.onopen = this.onOpen.bind(this);
@@ -39,5 +39,4 @@ class WebSocketHandler {
     }
   }
   
-  export {WebSocketHandler};
   

@@ -1,5 +1,5 @@
-import { InvalidArgumentError } from '../Errors/index.js';
-import { GeometryType } from './enums/index.js';
+import { InvalidArgumentError } from '../../Errors/index.js';
+import { GeometryType } from '../enums/index.js';
 
 export class CollisionDetection {
     static #collisionRectRect(rectA, rectB) {
@@ -79,6 +79,15 @@ export class CollisionDetection {
         }else{
             throw new InvalidArgumentError("Expected a Object")
         }
+    }
+
+    static isPointInsideRect(point, rect) {
+        return (
+            point.x >= rect.position.x - rect.Width / 2 &&
+            point.x <= rect.position.x + rect.Width / 2 &&
+            point.y >= rect.position.y - rect.Height / 2 &&
+            point.y <= rect.position.y + rect.Height / 2
+        );
     }
 }
 

@@ -1,6 +1,6 @@
 //usando GPT e um código de colisões de uma engine que fiz em c++
 import {ObjectGroup} from './enums/index.js'
-import {CollisionDetection} from './CollisionDetection.js'
+import {CollisionDetection} from './Middleware/CollisionDetection.js'
 
 export class Scene {
     #statics

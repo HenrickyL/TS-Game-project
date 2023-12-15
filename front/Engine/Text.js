@@ -30,7 +30,6 @@ export class Text extends Movable {
         this.#width = textMetrics.width;
         this.#height = this.#size;
         tempContext.restore()
-        this.translateTo(0,0)
     }
 
     get width() {

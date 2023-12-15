@@ -1,21 +1,17 @@
-import { Position } from "../Engine/Position";
+import { Object } from "../Engine/Object.js";
+import { Position } from "../Engine/Position.js";
+import { Vector } from "../Engine/Vector.js";
 
-export class Player{
-    #position 
+
+export class Player extends Object{
     #id = ""
     constructor(id){
         this.#id = id
-        this.#position = new Position(0,0)
     }
 
     get Id(){
         return this.#id
     }
-
-    get Position(){
-        return this.#position
-    }
-
 
 
     update(){
@@ -23,6 +19,10 @@ export class Player{
     }
 
     draw(context){
+
+    }
+
+    onCollision(obj){
 
     }
 }
