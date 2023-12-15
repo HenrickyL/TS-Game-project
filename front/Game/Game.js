@@ -6,8 +6,9 @@ import {Scene} from '../Engine/Scene.js'
 import { Button } from '../Engine/Middleware/Button.js'
 import { Color } from '../Engine/Colors.js'
 import { CollisionDetection } from '../Engine/Middleware/CollisionDetection.js'
-
-
+import { Ball } from './Ball.js'
+import {Timer} from "../Engine/Timer.js"
+import {Text} from "../Engine/Text.js"
 export class Game{
     #id
     #context
@@ -18,6 +19,12 @@ export class Game{
     #start = false
     #pause = true
     #graphics
+    #timer = new Timer()
+    #timeToGo = 5
+
+    #infos = []
+    #timerCount
+    #stringAux = ""
 
     #btStart
     constructor(id){
@@ -35,7 +42,7 @@ export class Game{
     #checkInputs(){
         if(!this.#start && this.#input.onClick && CollisionDetection.isPointInsideRect(this.#input.mouseClick, this.#btStart.background)){
             this.#start = true
-            console.log("click")
+            this.#timer.startTimer()
         }
     }
 
@@ -45,26 +52,35 @@ export class Game{
     //-------------------------------------
     update(){
         this.#checkInputs()
+        this.#updateTimer()
         this.#scene.update()
         this.#scene.collisionDetection()
+
+    }
+
+    #initPlayer(){
+
+    }
+    #initOpponent(){
+
+    }
+
+    #initBall(){
+        this.#scene.add(new Ball(this.#graphics.middleCenter))
     }
 
     init(graphics, input){
         this.#input = input
         this.#graphics = graphics
         this.#context = this.#graphics.context
-        const pos = new Position(300,50)
-        const pos2 = new Position(300,400)
+        const ref = this.#graphics.topCenter
+        const pos = new Position(ref.x, ref.y+20)
+        this.#timerCount = new Text(`${this.#timeToGo.toString().padStart(2,'0')}`,pos, Color.BLACK, 45)
         
-        const bbox1 = new Rect(pos, 30,30)
-        const bbox2 = new Rect(pos2, 80,20)
+        this.#initBall()
+        this.#initPlayer()
+        this.#initOpponent()
         
-        const player = new RigidObject(pos, bbox1)
-        const block = new RigidObject(pos2, bbox2, true)
-        
-        
-        this.#scene.add(player, ObjectGroup.MOVING)
-        this.#scene.add(block, ObjectGroup.STATIC)
         this.#createBtStart()
     }
 
@@ -74,6 +90,25 @@ export class Game{
             this.#drawMenu()
         }else{
             this.#scene.draw(this.#context)
+            this.#infos.forEach(info =>{
+                info.draw(this.#context)
+            })
+            this.#timerCount.draw(this.#context)
+        }
+    }
+
+    #updateTimer(){
+        if(this.#start && this.#pause){
+            if(this.#timer.getElapsedSeconds() > this.#timeToGo){
+                this.#pause = false
+                this.#timer.resetTimer()
+                this.#timerCount.size = 30
+            }else{
+                this.#timerCount.text = `${(this.#timeToGo - Math.floor(this.#timer.getElapsedSeconds())).toString().padStart(3,'0')}`
+            }
+        }else if(!this.#pause){
+            this.#timerCount.text = `${Math.floor(this.#timer.getElapsedSeconds()).toString().padStart(3,'0')}`
+
         }
     }
 }
