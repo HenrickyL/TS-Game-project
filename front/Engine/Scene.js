@@ -1,5 +1,7 @@
 //usando GPT e um código de colisões de uma engine que fiz em c++
-import {GeometryType, ObjectGroup} from './enums/index.js'
+import {ObjectGroup} from './enums/index.js'
+import {CollisionDetection} from './CollisionDetection.js'
+
 export class Scene {
     #statics
     #moving
@@ -69,7 +71,7 @@ export class Scene {
         if (this.#moving.length >= 2) {
             for (let i = 0; i < this.#moving.length - 1; i++) {
                 for (let j = i + 1; j < this.#moving.length; j++) {
-                    if (this.collision(this.#moving[i].bbox, this.#moving[j].bbox)) {
+                    if (CollisionDetection.collision(this.#moving[i].bbox, this.#moving[j].bbox)) {
                         this.#collisions.push({ a: this.#moving[i], b: this.#moving[j] });
                     }
                 }
@@ -78,7 +80,7 @@ export class Scene {
 
         this.#moving.forEach(obj => {
             this.#statics.forEach(staticObj => {
-                if (this.collision(obj.bbox, staticObj.bbox)) {
+                if (CollisionDetection.collision(obj.bbox, staticObj.bbox)) {
                     this.#collisions.push({ a: obj, b: staticObj });
                 }
             });
@@ -105,82 +107,4 @@ export class Scene {
 
         this.#toDelete = [];
     }
-
-    #collisionRectRect(rectA, rectB) {
-        return (
-            rectA.left <= rectB.right &&
-            rectA.right >= rectB.left &&
-            rectA.top <= rectB.bottom &&
-            rectA.bottom >= rectB.top
-        );
-    }
-
-    #collisionRectPoint(rect, point) {
-        return (
-            point.x >= rect.left &&
-            point.x <= rect.right &&
-            point.y >= rect.top &&
-            point.y <= rect.bottom
-        );
-    }
-
-    #collisionRectCircle(rect, circle) {
-        let closestX = clamp(circle.position.x, rect.left, rect.right);
-        let closestY = clamp(circle.position.y, rect.top, rect.bottom);
-
-        let distanceX = circle.position.x - closestX;
-        let distanceY = circle.position.y - closestY;
-
-        let distanceSquared = distanceX * distanceX + distanceY * distanceY;
-        return distanceSquared < circle.radius * circle.radius;
-    }
-
-    #collisionCircleCircle(circleA, circleB) {
-        let distance = Math.sqrt(
-            (circleB.position.x - circleA.position.x) ** 2 +
-            (circleB.position.y - circleA.position.y) ** 2
-        );
-
-        return distance < circleA.radius + circleB.radius;
-    }
-
-    #collisionCirclePoint(circle, point) {
-        let distance = Math.sqrt(
-            (point.x - circle.position.x) ** 2 +
-            (point.y - circle.position.y) ** 2
-        );
-
-        return distance < circle.radius;
-    }
-
-    #collisionPointPoint(pointA, pointB) {
-        return pointA.x === pointB.x && pointA.y === pointB.y;
-    }
-
-    collision(objA, objB) {
-        if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.RECTANGLE) {
-            return this.#collisionRectRect(objA, objB);
-        } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.CIRCLE) {
-            return this.#collisionCircleCircle(objA, objB);
-        } else if (objA.type === GeometryType.POINT && objB.type === GeometryType.POINT) {
-            return this.#collisionPointPoint(objA.position, objB.position);
-        } else if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.POINT) {
-            return this.#collisionRectPoint(objA, objB.position);
-        } else if (objA.type === GeometryType.POINT && objB.type === GeometryType.RECTANGLE) {
-            return this.#collisionRectPoint(objB, objA.position);
-        } else if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.CIRCLE) {
-            return this.#collisionRectCircle(objA, objB);
-        } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.RECTANGLE) {
-            return this.#collisionRectCircle(objB, objA);
-        } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.POINT) {
-            return this.#collisionCirclePoint(objA, objB.position);
-        }else if (objA.type === GeometryType.POINT && objB.type === GeometryType.CIRCLE) {
-            return this.#collisionCirclePoint(objB, objA.position);
-        }
-        return false;
-    }
-}
-
-function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
 }
