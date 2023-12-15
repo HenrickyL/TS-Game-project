@@ -1,3 +1,7 @@
+import {InvalidArgumentError} from '../Errors/index.js'
+import { Vector } from './Vector.js'
+
+
 export class Position{
     #x = 0
     #y = 0
@@ -41,5 +45,13 @@ export class Position{
         const dx = other.X - this.#x;
         const dy = other.Y - this.#y;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    subtractToVector(other){
+        if(other instanceof Position){
+            return new Vector(other.x - this.x, other.y - this.y)
+        }else{
+            throw new InvalidArgumentError("Expected a Position.")
+        }
     }
 }
