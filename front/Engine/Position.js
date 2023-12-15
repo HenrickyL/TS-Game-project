@@ -54,4 +54,8 @@ export class Position{
             throw new InvalidArgumentError("Expected a Position.")
         }
     }
+
+    copy(){
+        return new Position(this.x, this.y)
+    }
 }

@@ -9,6 +9,11 @@ import { CollisionDetection } from '../Engine/Middleware/CollisionDetection.js'
 import { Ball } from './Ball.js'
 import {Timer} from "../Engine/Timer.js"
 import {Text} from "../Engine/Text.js"
+import { Player } from './Player.js'
+import {Opponent} from './Opponent.js'
+
+
+
 export class Game{
     #id
     #context
@@ -63,14 +68,19 @@ export class Game{
     }
 
     #initPlayer(){
+        this.#player = new Player(this.#graphics.middleLeft, this.#graphics.height)
+        this.#player.input = this.#input
+        this.#scene.add(this.#player)
 
     }
     #initOpponent(){
-
+        this.#opponent = new Opponent(this.#graphics.middleRight, this.#graphics.height)
+        this.#opponent.input = this.#input
+        this.#scene.add(this.#opponent)
     }
 
     #initBall(){
-        this.#ball = new Ball(this.#graphics.middleCenter)
+        this.#ball = new Ball(this.#graphics.middleCenter, this.#graphics.width, this.#graphics.height)
         this.#scene.add(this.#ball)
     }
 

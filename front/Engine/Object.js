@@ -25,4 +25,13 @@ export class Object extends Movable{
     }
 
     onCollisionEnd(obj){}
+
+    moveTo(position){
+        super.moveTo(position)
+        this.bbox.moveTo(position)
+    }
+    translateTo(delta){
+        super.translateTo(delta)
+        this.bbox.translateTo(delta)
+    }
 }

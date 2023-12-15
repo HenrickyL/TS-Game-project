@@ -1,15 +1,19 @@
 import {Object} from "../Object.js"
 import { Vector } from "../Vector.js"
+import { RigidObjectType } from "../enums/index.js"
+
+
 export class RigidObject extends Object{
     static #gravity = Vector.Down.prod(0.1)
     _normal = Vector.Zero
-    _isStatic = false
+    _applyPhysics = true
     _currentStatic = false
     #zero = Vector.Zero
-    
-    constructor(position, bbox, isStatic = false){
+    _type = RigidObjectType.DEFAULT
+
+    constructor(position, bbox, applyPhysics = false){
         super(position, bbox)
-        this._isStatic = isStatic
+        this._applyPhysics = applyPhysics
     }
 
 
@@ -24,7 +28,7 @@ export class RigidObject extends Object{
     update(){
         super.update()
         let resultActions = this.#zero
-        if(!this._isStatic && !this._currentStatic){
+        if(this._applyPhysics && !this._currentStatic){
             resultActions = resultActions.add(RigidObject.gravity.add(this._normal))
             this._momentum.increase(this._speed.add(resultActions))
             this.translateTo(this._momentum)
@@ -36,11 +40,11 @@ export class RigidObject extends Object{
     onCollision(obj){
         super.onCollision(obj)
         if(obj instanceof RigidObject){
-            if(this._isStatic){
+            if(this._applyPhysics && RigidObjectType.DEFAULT == this._type){
                 //parar
-                // obj._currentStatic = true;
+                obj._currentStatic = true;
                 //quicar
-                obj._normal = obj._momentum.inverse.prod(1.9)
+                // obj._normal = obj._momentum.inverse.prod(1.9)
                 //quicar continuo
                 // obj._normal = obj._momentum.inverse
                 // obj._momentum = new Vector(0,-0.01)
@@ -50,9 +54,6 @@ export class RigidObject extends Object{
                 // obj._momentum = this.#zero
                 //atravessar
                 // obj._normal = obj.speed.inverse
-
-            }else{
-
             }
         }
     }

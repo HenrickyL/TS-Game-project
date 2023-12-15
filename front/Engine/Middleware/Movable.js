@@ -5,13 +5,18 @@ import {Vector} from '../Vector.js'
 export class Movable {
     _rotateRad = 0
     _position;
+    _initialPosition
     _speed = Vector.Zero;
     _momentum = Vector.Zero
     constructor(position = new Position(), speed = Vector.Zero) {
         this._position = new Position(position.x, position.y)
+        this._initialPosition = new Position(position.x, position.y)
         this._speed = speed
     }
 
+    get initialPosition(){
+        return this._initialPosition
+    }
     get speed(){
         return this._speed
     }

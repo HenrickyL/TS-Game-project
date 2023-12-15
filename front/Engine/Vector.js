@@ -71,6 +71,14 @@ export class Vector{
         }
     }
 
+    inverteX(){
+        this.#x *=-1
+    }
+
+    inverteY(){
+        this.#y *=-1
+    }
+
     static get Right(){
         return new Vector(1,0)
     }

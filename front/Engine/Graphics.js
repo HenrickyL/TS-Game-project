@@ -32,6 +32,14 @@ export class Graphics{
         return this.#context
     }
 
+    get width(){
+        return this.#width
+    }
+
+    get height(){
+        return this.#height
+    }
+
     clear(){
         this.#context.clearRect(0,0, this.#width, this.#height)
     }
