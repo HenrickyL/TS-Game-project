@@ -1,24 +1,28 @@
-import {Movable} from "./Middleware/Movable"
+import {Movable} from "./Middleware/Movable.js"
 
 
 export class Object extends Movable{
-    #bbox //Geometry colision
-
+    _bbox //Geometry colision
+    _isColliding = false
     constructor(position, bbox){
         super(position)
-        this.#bbox = bbox
-        this.#bbox.position = this._position
+        this._bbox = bbox
+        this._bbox.position = this._position
     }
 
     get bbox(){
-        return this.#bbox
+        return this._bbox
     }
 
-    update(){}
+    update(){
+        this._isColliding = false
+    }
     draw(context){
         this.bbox.draw(context)
     }
     onCollision(obj){
-        console.log("colidi com ", obj)
+        this._isColliding = true
     }
+
+    onCollisionEnd(obj){}
 }

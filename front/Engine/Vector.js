@@ -61,7 +61,33 @@ export class Vector{
         return  this.x * other.y === this.y * other.x;
     }
 
-    
+    increase(other){
+        if(other instanceof Vector){
+            this.#x += other.x
+            this.#y += other.y
+        }else{
+            console.error('>>',other)
+            throw new InvalidArgumentError("Expected a vector.")
+        }
+    }
 
+    static get Right(){
+        return new Vector(1,0)
+    }
+    static get Left(){
+        return new Vector(-1,0)
+    }
+    static get Down(){
+        return new Vector(0,1)
+    }
+    static get Up(){
+        return new Vector(0,-1)
+    }
+    static get One(){
+        return new Vector(1,-1)
+    }
+    static get Zero(){
+        return new Vector(0,0)
+    }
 
 }

@@ -1,106 +1,112 @@
 //usando GPT e um código de colisões de uma engine que fiz em c++
 import {GeometryType, ObjectGroup} from './enums/index.js'
 export class Scene {
+    #statics
+    #moving
+    #collisions
+    #toDelete
+    #processing
+
     constructor() {
-        this.statics = [];
-        this.moving = [];
-        this.collisions = [];
-        this.toDelete = [];
-        this.processing = ObjectGroup.STATIC; // Define o processamento inicial como estático
+        this.#statics = [];
+        this.#moving = [];
+        this.#collisions = [];
+        this.#toDelete = [];
+        this.#processing = ObjectGroup.STATIC; // Define o processamento inicial como estático
     }
 
     add(obj, type) {
         if (type === ObjectGroup.STATIC) {
-            this.statics.push(obj);
+            this.#statics.push(obj);
         } else {
-            this.moving.push(obj);
+            this.#moving.push(obj);
         }
     }
 
     remove(obj, type) {
         if (type === ObjectGroup.STATIC) {
-            const index = this.statics.indexOf(obj);
+            const index = this.#statics.indexOf(obj);
             if (index !== -1) {
-                this.statics.splice(index, 1);
+                this.#statics.splice(index, 1);
             }
         } else {
-            const index = this.moving.indexOf(obj);
+            const index = this.#moving.indexOf(obj);
             if (index !== -1) {
-                this.moving.splice(index, 1);
+                this.#moving.splice(index, 1);
             }
         }
     }
 
     delete(obj, type) {
-        this.toDelete.push({ obj, type });
+        this.#toDelete.push({ obj, type });
     }
 
     size() {
-        return this.statics.length + this.moving.length;
+        return this.#statics.length + this.#moving.length;
     }
 
     update() {
-        this.processing = ObjectGroup.STATIC;
-        this.statics.forEach(obj => obj.update());
+        this.#processing = ObjectGroup.STATIC;
+        this.#statics.forEach(obj => obj.update());
 
-        this.processing = ObjectGroup.MOVING;
-        this.moving.forEach(obj => obj.update());
+        this.#processing = ObjectGroup.MOVING;
+        this.#moving.forEach(obj => obj.update());
 
-        this.processDeleted();
+        this.#processDeleted();
     }
 
     draw(context) {
-        this.processing = ObjectGroup.STATIC;
-        this.statics.forEach(obj => obj.draw(context));
+        this.#processing = ObjectGroup.STATIC;
+        this.#statics.forEach(obj => obj.draw(context));
 
-        this.processing = ObjectGroup.MOVING;
-        this.moving.forEach(obj => obj.draw(context));
+        this.#processing = ObjectGroup.MOVING;
+        this.#moving.forEach(obj => obj.draw(context));
     }
 
     collisionDetection() {
-        this.collisions = [];
+        this.#collisions = [];
 
-        if (this.moving.length >= 2) {
-            for (let i = 0; i < this.moving.length - 1; i++) {
-                for (let j = i + 1; j < this.moving.length; j++) {
-                    if (this.collision(this.moving[i].bbox, this.moving[j].bbox)) {
-                        this.collisions.push({ a: this.moving[i], b: this.moving[j] });
+        if (this.#moving.length >= 2) {
+            for (let i = 0; i < this.#moving.length - 1; i++) {
+                for (let j = i + 1; j < this.#moving.length; j++) {
+                    if (this.collision(this.#moving[i].bbox, this.#moving[j].bbox)) {
+                        this.#collisions.push({ a: this.#moving[i], b: this.#moving[j] });
                     }
                 }
             }
         }
 
-        this.moving.forEach(obj => {
-            this.statics.forEach(staticObj => {
-                if (this.collision(obj, staticObj)) {
-                    this.collisions.push({ a: obj, b: staticObj });
+        this.#moving.forEach(obj => {
+            this.#statics.forEach(staticObj => {
+                if (this.collision(obj.bbox, staticObj.bbox)) {
+                    this.#collisions.push({ a: obj, b: staticObj });
                 }
             });
         });
 
-        if (this.collisions.length > 0) {
-            this.collisions.forEach(({ a, b }) => {
+        if (this.#collisions.length > 0) {
+            this.#collisions.forEach(({ a, b }) => {
                 a.onCollision(b);
                 b.onCollision(a);
             });
         }
 
-        this.processDeleted();
+        this.#processDeleted();
     }
 
-    processDeleted() {
-        this.toDelete.forEach(({ obj, type }) => {
-            const list = type === ObjectGroup.STATIC ? this.statics : this.moving;
+    #processDeleted() {
+        this.#toDelete.forEach(({ obj, type }) => {
+            const list = type === ObjectGroup.STATIC ? this.#statics : this.#moving;
             const index = list.indexOf(obj);
             if (index !== -1) {
                 list.splice(index, 1);
             }
         });
 
-        this.toDelete = [];
+        this.#toDelete = [];
     }
 
-    collisionRectRect(rectA, rectB) {
+    #collisionRectRect(rectA, rectB) {
         return (
             rectA.left <= rectB.right &&
             rectA.right >= rectB.left &&
@@ -109,7 +115,7 @@ export class Scene {
         );
     }
 
-    collisionRectPoint(rect, point) {
+    #collisionRectPoint(rect, point) {
         return (
             point.x >= rect.left &&
             point.x <= rect.right &&
@@ -118,7 +124,7 @@ export class Scene {
         );
     }
 
-    collisionRectCircle(rect, circle) {
+    #collisionRectCircle(rect, circle) {
         let closestX = clamp(circle.position.x, rect.left, rect.right);
         let closestY = clamp(circle.position.y, rect.top, rect.bottom);
 
@@ -129,7 +135,7 @@ export class Scene {
         return distanceSquared < circle.radius * circle.radius;
     }
 
-    collisionCircleCircle(circleA, circleB) {
+    #collisionCircleCircle(circleA, circleB) {
         let distance = Math.sqrt(
             (circleB.position.x - circleA.position.x) ** 2 +
             (circleB.position.y - circleA.position.y) ** 2
@@ -138,7 +144,7 @@ export class Scene {
         return distance < circleA.radius + circleB.radius;
     }
 
-    collisionCirclePoint(circle, point) {
+    #collisionCirclePoint(circle, point) {
         let distance = Math.sqrt(
             (point.x - circle.position.x) ** 2 +
             (point.y - circle.position.y) ** 2
@@ -147,29 +153,29 @@ export class Scene {
         return distance < circle.radius;
     }
 
-    collisionPointPoint(pointA, pointB) {
+    #collisionPointPoint(pointA, pointB) {
         return pointA.x === pointB.x && pointA.y === pointB.y;
     }
 
     collision(objA, objB) {
         if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.RECTANGLE) {
-            return this.collisionRectRect(objA, objB);
+            return this.#collisionRectRect(objA, objB);
         } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.CIRCLE) {
-            return this.collisionCircleCircle(objA, objB);
+            return this.#collisionCircleCircle(objA, objB);
         } else if (objA.type === GeometryType.POINT && objB.type === GeometryType.POINT) {
-            return this.collisionPointPoint(objA.position, objB.position);
+            return this.#collisionPointPoint(objA.position, objB.position);
         } else if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.POINT) {
-            return this.collisionRectPoint(objA, objB.position);
+            return this.#collisionRectPoint(objA, objB.position);
         } else if (objA.type === GeometryType.POINT && objB.type === GeometryType.RECTANGLE) {
-            return this.collisionRectPoint(objB, objA.position);
+            return this.#collisionRectPoint(objB, objA.position);
         } else if (objA.type === GeometryType.RECTANGLE && objB.type === GeometryType.CIRCLE) {
-            return this.collisionRectCircle(objA, objB);
+            return this.#collisionRectCircle(objA, objB);
         } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.RECTANGLE) {
-            return this.collisionRectCircle(objB, objA);
+            return this.#collisionRectCircle(objB, objA);
         } else if (objA.type === GeometryType.CIRCLE && objB.type === GeometryType.POINT) {
-            return this.collisionCirclePoint(objA, objB.position);
+            return this.#collisionCirclePoint(objA, objB.position);
         }else if (objA.type === GeometryType.POINT && objB.type === GeometryType.CIRCLE) {
-            return this.collisionCirclePoint(objB, objA.position);
+            return this.#collisionCirclePoint(objB, objA.position);
         }
         return false;
     }
