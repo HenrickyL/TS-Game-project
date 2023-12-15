@@ -45,10 +45,12 @@ export const RigidObjectType = {
 
 
 export const SocketEvent = {
-    MESSAGE : 'message',
-    CONNECTION : 'connection',
-    CLOSE : 'close',
-    ERROR : 'error',
-    START : 'start',
-    ACTION : 'action',
+    MESSAGE: 'message',
+    CONNECTION: 'connection',
+    CLOSE: 'close',
+    ERROR: 'error',
+    START: 'START',
+    STOP: 'STOP',
+    PAUSE: 'PAUSE',
+    ACTION: "ACTION"
 }

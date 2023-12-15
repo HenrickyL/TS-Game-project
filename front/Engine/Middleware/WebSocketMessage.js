@@ -21,8 +21,7 @@ export class WebSocketMessage{
     json(){
         return {
             type: this.type,
-            data: this.data,
-            createdAt: this.createdAt 
+            data: {...this.data, createdAt: this.createdAt },
         }
     }
 }
