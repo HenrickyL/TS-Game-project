@@ -54,11 +54,13 @@ export const SocketEvent = {
     JOIN: 'JOIN',
     STOP: 'STOP',
     PAUSE: 'PAUSE',
-    ACTION: "ACTION"
+    ACTION: "ACTION",
+    UPDATE: "UPDATE"
 }
 
 export const  GameActions = {
     IN_UP: 'IN_UP',
     IN_DOWN: 'IN_DOWN',
-    POINT:  'POINT'
+    POINT:  'POINT',
+    UPDATE: 'UPDATE'
 }

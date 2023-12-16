@@ -1,17 +1,19 @@
 import {Circle} from '../Engine/Geometry.js'
 import { Color } from "../Engine/Colors.js";
-import { Vector } from "../Engine/Vector.js";
 import { RigidObject } from "../Engine/Middleware/RigidObject.js";
 import { Player } from './Player.js';
-import { InvalidArgumentError } from '../Errors/index.js';
+import { WebSocketMessage } from '../Engine/Middleware/WebSocketMessage.js';
+import { SocketEvent } from '../Engine/enums/index.js';
 
 export class Ball extends RigidObject{
-    #magSpeed = 2.5
+    #magSpeed = 2
     #width 
     #height
     #countPlayer = 0
     #countOpponent = 0
     #start = false
+
+    #webSocket
 
     constructor(position, width, height){
         super(position, new Circle(position, 10, Color.RED))
@@ -19,7 +21,9 @@ export class Ball extends RigidObject{
         this.#height = height
         this.#width = width
     }
-
+    set webSocket(ws){
+        this.#webSocket = ws
+    }
     get countPlayer(){
         return this.#countPlayer
     }
@@ -38,24 +42,30 @@ export class Ball extends RigidObject{
         this.start()
     }
 
+    draw(context){
+        super.draw(context)
+        if(this.#start){
+            this.#webSocket.send(new WebSocketMessage(SocketEvent.UPDATE,{x: this.x, y: this.y}))
+        }
+    }
     update(){
         if(this.#start){
-            this.translateTo(this.speed)
-            if(this.bbox.top <= 0 || this.bbox.bottom >= this.#height){
-                this.speed.inverteY(0.7 + Math.random() * 0.3)
-            }
+            // this.translateTo(this.speed)
+            // if(this.bbox.top <= 0 || this.bbox.bottom >= this.#height){
+            //     this.speed.inverteY(0.7 + Math.random() * 0.3)
+            // }
     
-            if(this.bbox.left <= 0 ){
-                this.#countOpponent++
-            }else if(this.bbox.right >= this.#width ){
-                this.#countPlayer++
-            }
+            // if(this.bbox.left <= 0 ){
+            //     this.#countOpponent++
+            // }else if(this.bbox.right >= this.#width ){
+            //     this.#countPlayer++
+            // }
         }
     }
 
     onCollision(obj){
         if(obj instanceof Player){
-            this.speed.inverteX(0.7 + Math.random() * 0.3)
+            // this.speed.inverteX(0.7 + Math.random() * 0.3)
         }
     }
     

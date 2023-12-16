@@ -49,18 +49,12 @@ export class Movable {
     }
 
     moveTo(position){
-        this._position.x = position.x
-        this._position.y = position.y
-    }
-
-    moveTo(x, y){
-        this._position.x = x
-        this._position.y = y
-    }
-
-    translateTo(dx, dy=0){
-        this._position.x += dx
-        this._position.y += dy
+        if(position instanceof Position){
+            this._position.x = position.x
+            this._position.y = position.y
+        }else{
+            throw new InvalidArgumentError("Expected a Position.")
+        }
     }
 
     translateTo(delta){

@@ -2,47 +2,69 @@ import {v4 as uuid} from 'uuid'
 import { Player } from "./Player"
 import { GameStatus } from "@core/enums/GameStatus"
 import { IGame, IVector } from "@core/DTOs"
+import { Ball } from './Ball'
 
 
 export class Game{
     private readonly maxPlayer: number = 2
-    private players: Player[]
+    private playerLeft: Player 
+    private playerRight: Player 
     private id: string
     private status: GameStatus = GameStatus.PAUSE
-    private initialDirection :IVector
+    private ball : Ball
+    private players: Player[] = []
 
-    constructor(){
-        this.players = []
+    constructor(player1: Player, player2: Player){
         this.id = uuid()
-        this.initialDirection = {x:getDirection(), y: getDirection()}
+        this.playerLeft = player1
+        this.playerRight = player2
+
+        this.players.push(this.playerLeft)
+        this.players.push(this.playerRight)
+        const direction : IVector = {x:getDirection(), y: getDirection()}
+        this.ball = new Ball(direction)
     }
 
+    getBall(): Ball{
+        return this.ball
+    }
     get Id():string{
         return this.id
+    }
+
+    get PlayerLeft():Player{
+        return this.playerLeft
+    }
+    get PlayerRight():Player{
+        return this.playerRight
+    }
+
+    get Players():Player[]{
+        return this.players
     }
 
     get info(): IGame{
         return {
             id: this.Id,
-            initialDirection: this.initialDirection
+            initialDirection: this.ball.direction
         }
     }
-
-    get Players(): Player[]{
-        return this.players
-    }
+    
     get Status(): GameStatus{
         return this.status
     }
 
-    update(): void {
-        throw new Error("Method not implemented.");
+    get Score(){
+        return {left: this.playerLeft.Score, right: this.playerRight.Score}
     }
-
-
-    addPlayer(player: Player):void{
-        if(this.players.length <= this.maxPlayer){
-            this.players.push(player)
+    update(): void {
+        const ball = this.ball
+        ball.update()
+        if(ball.Position.x < 0){
+            this.playerRight.increaseScore()
+        }
+        if(ball.Position.x > 800){
+            this.playerLeft.increaseScore()
         }
     }
 

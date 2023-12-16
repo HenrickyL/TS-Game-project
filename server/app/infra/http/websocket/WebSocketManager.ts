@@ -1,5 +1,5 @@
 import { IManeger } from "@core/infra";
-import {IConnectClient, IMessage, IConnectGame, IJoin, IAction} from "@core/DTOs"
+import {IConnectClient, IMessage, IConnectGame, IJoin, IAction, IPosition} from "@core/DTOs"
 import { GameActions, PlayerStatus, SocketEvent } from "@enums/index";
 
 import {WebSocketServer, WebSocket} from 'ws'
@@ -55,6 +55,10 @@ export class WebSocketManager implements IManeger<WebSocket>{
                         this.onMessage(socket, `[${player.Id}] client in queue.`);
                     }
                     break;
+                case SocketEvent.UPDATE:
+                    const pos = dataObj.data as IPosition
+                    this.updateGame(player, pos)
+                    break
                 case SocketEvent.ACTION:
                     const data = dataObj.data as IAction
                     this.emitAction(player, data)
@@ -64,6 +68,20 @@ export class WebSocketManager implements IManeger<WebSocket>{
                     break
             }
         });
+    }
+
+    private updateGame(player: Player, pos: IPosition){
+        const game = player.Game
+        if(player.isLeft && game){
+            const ball = game.getBall()
+            ball.setPosition(pos)
+            game.update()
+            game.Players.forEach(p=>{
+                WebSocketManager.send(p.Socket, new WebSocketMessage(SocketEvent.UPDATE,{
+                    ballPosition: ball.Delta
+                }))
+            })
+        }
     }
 
     private saveGameStatus(player: Player, data: IAction){
@@ -76,7 +94,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
         const opponent = player.getOpponent()
         if(opponent){
             this.saveGameStatus(player, data)
-            this.send(opponent.Socket,new WebSocketMessage<IAction>(SocketEvent.ACTION,data))
+            WebSocketManager.send(opponent.Socket,new WebSocketMessage<IAction>(SocketEvent.ACTION,data))
         }
     }
 
@@ -99,7 +117,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
         this.connectedSockets.forEach((player) => {
             if (player.Socket.readyState === WebSocket.OPEN) {
                 const socket = player.Socket
-                this.send(socket, new WebSocketMessage(SocketEvent.MESSAGE, {
+                WebSocketManager.send(socket, new WebSocketMessage(SocketEvent.MESSAGE, {
                     message,
                     data
                 } ))
@@ -142,7 +160,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
         console.log(`<id:${roomId}> ${message}`);
     }
 
-    send(socket: WebSocket, message: WebSocketMessage){
+    static send(socket: WebSocket, message: WebSocketMessage){
         const jsonString = JSON.stringify(message.json());
         socket.send(jsonString);
     }
@@ -158,7 +176,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
             if(game && game.Status != GameStatus.STOP){
                 game.setStatus(GameStatus.STOP)
                 game.Players.forEach(player=>{
-                    this.send(player.Socket, new WebSocketMessage(SocketEvent.STOP,
+                    WebSocketManager.send(player.Socket, new WebSocketMessage(SocketEvent.STOP,
                         {   gameId: game.Id,
                             message: "Seu Oponente se desconectou"
                         }))
@@ -170,7 +188,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
 
     private createGame(): Game{
         const [player1, player2] = this.clientQueue.splice(0, 2); // Retira 2 clientes da fila
-        const game = new Game();
+        const game = new Game(player1, player2);
         const roomId = game.Id
         this.rooms.set(roomId, game);
 
@@ -180,12 +198,12 @@ export class WebSocketManager implements IManeger<WebSocket>{
     }
 
     private gamePlayerJoin(game: Game, player1: Player, player2: Player){
-        game.addPlayer(player1)
         player1.SetGame(game)
-        this.send(player1.Socket, new WebSocketMessage<IJoin>(SocketEvent.JOIN,{
+        WebSocketManager.send(player1.Socket, new WebSocketMessage<IJoin>(SocketEvent.JOIN,{
             clientId: player1.Id,
             OpponentId: player2.Id,
-            game: player1.Game?.info
+            game: player1.Game?.info,
+            isLeft: player1.isLeft
         }))
         this.onMessage(player1.Socket,`<${game.Id}> player join the game`)
     }
@@ -202,7 +220,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
             clientId: clientId,
             status: player.Status
         }
-        this.send(socket, new WebSocketMessage(SocketEvent.CONNECTION, {
+        WebSocketManager.send(socket, new WebSocketMessage(SocketEvent.CONNECTION, {
             ...response,
         }))
         
@@ -212,7 +230,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
     private registerOnQueue(player: Player){
         if(player)
             this.clientQueue.push(player)
-            this.send(player.Socket, new WebSocketMessage(SocketEvent.WAIT, {
+            WebSocketManager.send(player.Socket, new WebSocketMessage(SocketEvent.WAIT, {
                 message: "Você está na fila para uma partida."
         }))
 

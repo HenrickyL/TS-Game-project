@@ -35,6 +35,10 @@ export class Game{
 
     #btStart
     #webSocket
+
+    #playerPosition 
+    #opponentPosition 
+    #count = 0
     constructor(id){
         this.#id = id
         this.#scene = new Scene()
@@ -70,14 +74,14 @@ export class Game{
     }
 
     #initPlayer(){
-        this.#player = new Player(this.#graphics.middleLeft, this.#graphics.height)
+        this.#player = new Player(this.#playerPosition, this.#graphics.height)
         this.#player.webSocket = this.#webSocket
         this.#player.input = this.#input
         this.#scene.add(this.#player)
 
     }
     #initOpponent(){
-        this.#opponent = new Opponent(this.#graphics.middleRight, this.#graphics.height)
+        this.#opponent = new Opponent(this.#opponentPosition, this.#graphics.height)
         this.#opponent.webSocket = this.#webSocket
         this.#opponent.input = this.#input
         this.#scene.add(this.#opponent)
@@ -93,7 +97,14 @@ export class Game{
 
     #initBall(){
         this.#ball = new Ball(this.#graphics.middleCenter, this.#graphics.width, this.#graphics.height)
+        this.#ball.webSocket = this.#webSocket
         this.#scene.add(this.#ball)
+
+        this.#webSocket.addMessageHandler(SocketEvent.UPDATE, (updateData)=>{
+            const data = updateData.data
+            const pos = data.ballPosition
+            this.#ball.translateTo(new Vector(pos.x, pos.y))
+        })
     }
 
     init(graphics, input, webSocket){
@@ -106,14 +117,23 @@ export class Game{
         this.#timerCount = new Text(`${this.#timeToGo.toString().padStart(2,'0')}`,pos, Color.BLACK, 45)
         
         this.#initBall()
-        this.#initPlayer()
-        this.#initOpponent()
         this.#webSocket.addMessageHandler(SocketEvent.JOIN, (joinData)=>{
-            const direction = joinData.data.game.initialDirection
+            const data = joinData.data
+            const direction = data.game.initialDirection
+            if(data.isLeft){
+                this.#playerPosition = this.#graphics.middleLeft
+                this.#opponentPosition = this.#graphics.middleRight
+            }else{
+                this.#playerPosition = this.#graphics.middleRight
+                this.#opponentPosition = this.#graphics.middleLeft
+            }
             this.#start = true
             this.#timer.startTimer()
             this.#ball.speed = new Vector(direction.x, direction.y)
+            this.#initPlayer()
+            this.#initOpponent()
         })
+        
         
         this.#createBtStart()
         console.clear()

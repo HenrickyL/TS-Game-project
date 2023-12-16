@@ -27,6 +27,7 @@ export interface ICloseGame{
 export interface IJoin{
     clientId: string,
     OpponentId: string,
+    isLeft: boolean,
     game?: IGame
 }
 

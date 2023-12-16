@@ -8,5 +8,6 @@ export enum SocketEvent {
     JOIN = 'JOIN',
     STOP = 'STOP',
     PAUSE = 'PAUSE',
-    ACTION = "ACTION"
+    ACTION = "ACTION",
+    UPDATE = "UPDATE"
   }
