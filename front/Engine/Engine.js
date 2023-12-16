@@ -17,6 +17,7 @@ export class Engine{
     #onPause = false
     #frames = 0
     #elapsed = 0
+    #webSocket
 
     constructor(isVariableRate = true){
         this.#isVariableRate = isVariableRate
@@ -30,7 +31,9 @@ export class Engine{
         this.#input = new Input(this.#graphics.canvas)
         this.#loop()
     }
-
+    set webSocket(ws){
+        this.#webSocket = ws
+    }
     set fps(_fpd){
         this.#fps = _fpd
         this.#frameDuration = 1000/this.#fps
@@ -53,7 +56,7 @@ export class Engine{
         this.#timer.startTimer()
         if(!this.#game)
             throw new GameNotDefinedInEngineError();
-        this.#game.init(this.#graphics, this.input);
+        this.#game.init(this.#graphics, this.input, this.#webSocket);
         
         //gameLoop
         requestAnimationFrame(

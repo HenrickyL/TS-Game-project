@@ -41,3 +41,24 @@ export const RigidObjectType = {
     ELASTIC: "ELASTIC",
     DEFAULT: "DEFAULT"
 }
+
+
+
+export const SocketEvent = {
+    MESSAGE: 'message',
+    CONNECTION: 'connection',
+    CLOSE: 'close',
+    ERROR: 'error',
+    START: 'START',
+    WAIT: 'WAIT',
+    JOIN: 'JOIN',
+    STOP: 'STOP',
+    PAUSE: 'PAUSE',
+    ACTION: "ACTION"
+}
+
+export const  GameActions = {
+    IN_UP: 'IN_UP',
+    IN_DOWN: 'IN_DOWN',
+    POINT:  'POINT'
+}

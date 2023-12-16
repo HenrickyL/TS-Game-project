@@ -7,7 +7,11 @@ export class Opponent extends Player{
         this.bbox.color = Color.BLACK
     }
 
-    update(){
+    update(){}
 
+    translateByDirection(direction){
+        this.speed = direction.prod(this._magSpeed)
+        this.translateTo(this.speed)
     }
+
 }

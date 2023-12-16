@@ -71,12 +71,12 @@ export class Vector{
         }
     }
 
-    inverteX(){
-        this.#x *=-1
+    inverteX(proportion = 1){
+        this.#x *=-proportion
     }
 
-    inverteY(){
-        this.#y *=-1
+    inverteY(proportion = 1){
+        this.#y *=-proportion
     }
 
     static get Right(){

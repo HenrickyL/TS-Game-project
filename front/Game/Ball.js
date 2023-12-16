@@ -3,9 +3,10 @@ import { Color } from "../Engine/Colors.js";
 import { Vector } from "../Engine/Vector.js";
 import { RigidObject } from "../Engine/Middleware/RigidObject.js";
 import { Player } from './Player.js';
+import { InvalidArgumentError } from '../Errors/index.js';
 
 export class Ball extends RigidObject{
-    #magSpeed = 2
+    #magSpeed = 2.5
     #width 
     #height
     #countPlayer = 0
@@ -28,7 +29,8 @@ export class Ball extends RigidObject{
     }
 
     start(){
-        this.speed = new Vector(getDirection(), getDirection()).prod(this.#magSpeed)
+        this.#start= true
+        this.speed = this.speed.prod(this.#magSpeed)
     }
 
     reset(){
@@ -37,26 +39,25 @@ export class Ball extends RigidObject{
     }
 
     update(){
-        this.translateTo(this.speed)
-        if(this.bbox.top <= 0 || this.bbox.bottom >= this.#height){
-            this.speed.inverteY()
-        }
-
-        if(this.bbox.left <= 0 ){
-            this.#countOpponent++
-        }else if(this.bbox.right >= this.#width ){
-            this.#countPlayer++
+        if(this.#start){
+            this.translateTo(this.speed)
+            if(this.bbox.top <= 0 || this.bbox.bottom >= this.#height){
+                this.speed.inverteY(0.7 + Math.random() * 0.3)
+            }
+    
+            if(this.bbox.left <= 0 ){
+                this.#countOpponent++
+            }else if(this.bbox.right >= this.#width ){
+                this.#countPlayer++
+            }
         }
     }
 
     onCollision(obj){
         if(obj instanceof Player){
-            this.speed.inverteX()
+            this.speed.inverteX(0.7 + Math.random() * 0.3)
         }
     }
     
 }
 
-function getDirection() {
-    return Math.floor(Math.random()*100) % 5 == 0 ? 1 : -1; 
-}
