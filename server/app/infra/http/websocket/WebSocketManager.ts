@@ -170,7 +170,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
 
     private createGame(): Game{
         const [player1, player2] = this.clientQueue.splice(0, 2); // Retira 2 clientes da fila
-        const game = new Game();
+        const game = new Game(player1, player2);
         const roomId = game.Id
         this.rooms.set(roomId, game);
 
@@ -180,12 +180,12 @@ export class WebSocketManager implements IManeger<WebSocket>{
     }
 
     private gamePlayerJoin(game: Game, player1: Player, player2: Player){
-        game.addPlayer(player1)
         player1.SetGame(game)
         this.send(player1.Socket, new WebSocketMessage<IJoin>(SocketEvent.JOIN,{
             clientId: player1.Id,
             OpponentId: player2.Id,
-            game: player1.Game?.info
+            game: player1.Game?.info,
+            isLeft: player1.isLeft
         }))
         this.onMessage(player1.Socket,`<${game.Id}> player join the game`)
     }

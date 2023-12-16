@@ -1,12 +1,10 @@
 import {Circle} from '../Engine/Geometry.js'
 import { Color } from "../Engine/Colors.js";
-import { Vector } from "../Engine/Vector.js";
 import { RigidObject } from "../Engine/Middleware/RigidObject.js";
 import { Player } from './Player.js';
-import { InvalidArgumentError } from '../Errors/index.js';
 
 export class Ball extends RigidObject{
-    #magSpeed = 2.5
+    #magSpeed = 2
     #width 
     #height
     #countPlayer = 0

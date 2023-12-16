@@ -38,7 +38,9 @@ export class Player{
         return this.score
     }
 
-
+    get isLeft():boolean{
+        return this.Game?.PlayerLeft == this
+    }
 
     get Info(): IPlayer{
         return {
@@ -63,6 +65,6 @@ export class Player{
     }
 
     public getOpponent(): Player | undefined{
-        return this.game?.Players.filter(player=> player.Id !== this.Id)[0]
+        return this.isLeft ? this.game?.PlayerRight: this.game?.PlayerLeft 
     }
 }
