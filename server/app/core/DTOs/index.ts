@@ -27,6 +27,7 @@ export interface ICloseGame{
 export interface IJoin{
     clientId: string,
     OpponentId: string,
+    game?: IGame
 }
 
 
@@ -41,10 +42,20 @@ export interface IPlayer{
     opponentId?: string
     gameId?: string
     position: IPosition
+}
 
+export interface IGame{
+    id: string,
+    initialDirection: IVector
 }
 
 export interface IPosition{
     x: number,
     y: number
 }
+
+export interface IVector{
+    x: number,
+    y: number
+}
+

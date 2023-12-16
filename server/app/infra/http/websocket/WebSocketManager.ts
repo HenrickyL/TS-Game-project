@@ -33,6 +33,9 @@ export class WebSocketManager implements IManeger<WebSocket>{
         });
     }
 
+    #existPlayer(player: Player){
+        return this.clientQueue.map(p=>p.Socket).some(s=>player.Socket === s)
+    }
     
     private registerPlayer(socket: WebSocket){
         const player = this.createPlayer(socket)
@@ -45,16 +48,14 @@ export class WebSocketManager implements IManeger<WebSocket>{
         // Lidar com eventos de mensagem recebida
         socket.on(SocketEvent.MESSAGE, (message: string) => {
             const dataObj = JSON.parse(message) as IMessage;
-            console.log(dataObj)
-
             switch(dataObj.type){
                 case SocketEvent.START:
-                    console.log("START")
-                    this.onMessage(socket, `[${player.Id}] client in queue.`);
-                    this.registerOnQueue(player)
+                    if(!this.#existPlayer(player)){
+                        this.registerOnQueue(player)
+                        this.onMessage(socket, `[${player.Id}] client in queue.`);
+                    }
                     break;
                 case SocketEvent.ACTION:
-                    console.log("ACTION")
                     const data = dataObj.data as IAction
                     this.emitAction(player, data)
                     break;
@@ -186,7 +187,8 @@ export class WebSocketManager implements IManeger<WebSocket>{
         player1.SetGame(game)
         this.send(player1.Socket, new WebSocketMessage<IJoin>(SocketEvent.JOIN,{
             clientId: player1.Id,
-            OpponentId: player2.Id
+            OpponentId: player2.Id,
+            game: player1.Game?.info
         }))
         this.onMessage(player1.Socket,`<${game.Id}> player join the game`)
     }
@@ -213,8 +215,8 @@ export class WebSocketManager implements IManeger<WebSocket>{
     private registerOnQueue(player: Player){
         if(player)
             this.clientQueue.push(player)
-        this.send(player.Socket, new WebSocketMessage(SocketEvent.WAIT, {
-            message: "Você está na fila para uma partida."
+            this.send(player.Socket, new WebSocketMessage(SocketEvent.WAIT, {
+                message: "Você está na fila para uma partida."
         }))
 
         this.checkRoomAvailability()

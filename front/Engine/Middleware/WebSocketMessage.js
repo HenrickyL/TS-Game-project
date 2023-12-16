@@ -2,9 +2,11 @@ export class WebSocketMessage{
     #type
     #data
     #createdAt
-    constructor(type, data){
+    #message
+    constructor(type, data, message = null){
         this.#type = type
         this.#data = data
+        this.#message = message
         this.#createdAt = new Date()
     }
 
@@ -21,7 +23,9 @@ export class WebSocketMessage{
     json(){
         return {
             type: this.type,
-            data: {...this.data, createdAt: this.createdAt },
+            data: this.data,
+            message: this.#message,
+            createdAt: this.createdAt
         }
     }
 }

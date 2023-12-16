@@ -3,6 +3,7 @@ import { Color } from "../Engine/Colors.js";
 import { Vector } from "../Engine/Vector.js";
 import { RigidObject } from "../Engine/Middleware/RigidObject.js";
 import { Player } from './Player.js';
+import { InvalidArgumentError } from '../Errors/index.js';
 
 export class Ball extends RigidObject{
     #magSpeed = 2.5
@@ -28,7 +29,7 @@ export class Ball extends RigidObject{
     }
 
     start(){
-        this.speed = new Vector(getDirection(), getDirection()).prod(this.#magSpeed)
+        this.speed = this.speed.prod(this.#magSpeed)
     }
 
     reset(){
@@ -57,6 +58,3 @@ export class Ball extends RigidObject{
     
 }
 
-function getDirection() {
-    return Math.floor(Math.random()*100) % 2 == 0 ? 1 : -1; 
-}

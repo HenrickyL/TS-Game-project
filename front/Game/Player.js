@@ -3,20 +3,29 @@ import { Rect } from "../Engine/Geometry.js";
 import { RigidObject } from "../Engine/Middleware/RigidObject.js";
 import { Position } from "../Engine/Position.js";
 import { Vector } from "../Engine/Vector.js";
-import { InputKeys } from "../Engine/enums/index.js";
-
+import { GameActions, InputKeys, SocketEvent } from "../Engine/enums/index.js";
+import {WebSocketMessage} from '../Engine/Middleware/WebSocketMessage.js'
 
 export class Player extends RigidObject{
     _id = ""
     #input
     _magSpeed
     _height
+    _webSocket
+    _score = 0
     constructor(position, height){
         super(position, new Rect(position, 30,120))
         this._applyPhysics = false
         this.bbox.color = Color.BLUE
         this._magSpeed = 3
         this._height = height
+    }
+
+    get score(){
+        return this._score
+    }
+    set webSocket(ws){
+        this._webSocket = ws
     }
 
     set input(inp){
@@ -30,6 +39,14 @@ export class Player extends RigidObject{
         this._id = value
     }
 
+    get info(){
+        return{
+            clientId: this.id,
+            score: this.score,
+            position: this.position
+        }
+    }
+
     #validPosition(bbox){
         return bbox.top >= 0 && bbox.bottom <= this._height
     }
@@ -41,6 +58,10 @@ export class Player extends RigidObject{
             if(!this.#validPosition(this.bbox)){
                 this.moveTo(oldPos)
             }
+            this._webSocket.send(new WebSocketMessage(SocketEvent.ACTION,{
+                actionType: GameActions.IN_DOWN,
+                opponent: this.info
+            }))
         }else if(this.#input.keyDown(InputKeys.DOWN_ARROW)){
             const oldPos = this.position.copy()
             this.speed = Vector.Down.prod(this._magSpeed)
@@ -48,6 +69,10 @@ export class Player extends RigidObject{
             if(!this.#validPosition(this.bbox)){
                 this.moveTo(oldPos)
             }
+            this._webSocket.send(new WebSocketMessage(SocketEvent.ACTION,{
+                actionType: GameActions.IN_DOWN,
+                opponent: this.info
+            }))
         }
     }
 }
