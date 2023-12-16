@@ -52,10 +52,17 @@ window.addEventListener('load', ()=>{
     engine.start(game)
 })
 ```
+#### How to Run?
+- open `index.html` with live server of vscode
 
 ### Server
 
 em construção...
+
+### How to Run?
+
+- `cd server`
+- `npm start`
 
 Tentativa de encontrar 2 jogadores para jogar o game usando **WebSocket**
 
