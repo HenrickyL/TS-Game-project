@@ -1,4 +1,4 @@
-import { GameActions, PlayerStatus } from "@core/enums"
+import { GameActions, PlayerStatus, SocketEvent } from "@core/enums"
 import { GameStatus } from "@core/enums/GameStatus"
 
 export interface IConnectClient {
@@ -12,10 +12,11 @@ export interface IConnectGame {
 }
 
 
-export interface IMessage<T = any>{
+export interface IMessage<T = Object>{
     type: string
-    message: string
-    data?: T
+    message?: string
+    data?: T,
+    createdAt: Date
 }
 
 export interface ICloseGame{

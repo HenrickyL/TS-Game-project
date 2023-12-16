@@ -44,18 +44,25 @@ export class WebSocketManager implements IManeger<WebSocket>{
         const player = this.registerPlayer(socket)
         // Lidar com eventos de mensagem recebida
         socket.on(SocketEvent.MESSAGE, (message: string) => {
-            this.onMessage(socket, message);
+            const dataObj = JSON.parse(message) as IMessage;
+            console.log(dataObj)
+
+            switch(dataObj.type){
+                case SocketEvent.START:
+                    console.log("START")
+                    this.onMessage(socket, `[${player.Id}] client in queue.`);
+                    this.registerOnQueue(player)
+                    break;
+                case SocketEvent.ACTION:
+                    console.log("ACTION")
+                    const data = dataObj.data as IAction
+                    this.emitAction(player, data)
+                    break;
+                default:
+                    this.onMessage(socket, message);
+                    break
+            }
         });
-        //start para entrar na fila
-        socket.on(SocketEvent.START, () => {
-            this.onMessage(socket, `[${player.Id}] client in queue.`);
-            this.registerOnQueue(socket)
-        });
-        //actions
-        socket.on(SocketEvent.ACTION, (data: IAction)=>{
-            this.emitAction(player, data)
-            
-        })
     }
 
     private saveGameStatus(player: Player, data: IAction){
@@ -203,11 +210,10 @@ export class WebSocketManager implements IManeger<WebSocket>{
         return player
     }
 
-    private registerOnQueue(socket: WebSocket){
-        const player = this.getPlayerBySocket(socket)
+    private registerOnQueue(player: Player){
         if(player)
             this.clientQueue.push(player)
-        this.send(socket, new WebSocketMessage(SocketEvent.WAIT, {
+        this.send(player.Socket, new WebSocketMessage(SocketEvent.WAIT, {
             message: "Você está na fila para uma partida."
         }))
 

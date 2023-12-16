@@ -1,3 +1,4 @@
+import { IMessage } from "@core/DTOs"
 import { SocketEvent } from "@core/enums"
 
 export class WebSocketMessage<T = Object>{
@@ -20,10 +21,11 @@ export class WebSocketMessage<T = Object>{
         return this._createdAt
     }
 
-    json(){
+    json(): IMessage<T>{
         return {
             type: this.type,
-            data: {...this.data, createdAt: this.createdAt },
+            data: this.data ,
+            createdAt: this.createdAt,
         }
     }
 }
