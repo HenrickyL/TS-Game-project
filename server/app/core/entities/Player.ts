@@ -37,6 +37,9 @@ export class Player{
     get Score(): number{
         return this.score
     }
+    increaseScore(){
+        this.score++
+    }
 
     get isLeft():boolean{
         return this.Game?.PlayerLeft == this

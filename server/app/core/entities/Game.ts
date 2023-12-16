@@ -22,9 +22,12 @@ export class Game{
         this.players.push(this.playerLeft)
         this.players.push(this.playerRight)
         const direction : IVector = {x:getDirection(), y: getDirection()}
-        this.ball = new Ball({x:400, y: 300},direction)
+        this.ball = new Ball(direction)
     }
 
+    getBall(): Ball{
+        return this.ball
+    }
     get Id():string{
         return this.id
     }
@@ -51,8 +54,18 @@ export class Game{
         return this.status
     }
 
+    get Score(){
+        return {left: this.playerLeft.Score, right: this.playerRight.Score}
+    }
     update(): void {
-        throw new Error("Method not implemented.");
+        const ball = this.ball
+        ball.update()
+        if(ball.Position.x < 0){
+            this.playerRight.increaseScore()
+        }
+        if(ball.Position.x > 800){
+            this.playerLeft.increaseScore()
+        }
     }
 
     public setStatus(status: GameStatus):void{

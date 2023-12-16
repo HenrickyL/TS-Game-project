@@ -38,6 +38,7 @@ export class Game{
 
     #playerPosition 
     #opponentPosition 
+    #count = 0
     constructor(id){
         this.#id = id
         this.#scene = new Scene()
@@ -96,7 +97,14 @@ export class Game{
 
     #initBall(){
         this.#ball = new Ball(this.#graphics.middleCenter, this.#graphics.width, this.#graphics.height)
+        this.#ball.webSocket = this.#webSocket
         this.#scene.add(this.#ball)
+
+        this.#webSocket.addMessageHandler(SocketEvent.UPDATE, (updateData)=>{
+            const data = updateData.data
+            const pos = data.ballPosition
+            this.#ball.translateTo(new Vector(pos.x, pos.y))
+        })
     }
 
     init(graphics, input, webSocket){
