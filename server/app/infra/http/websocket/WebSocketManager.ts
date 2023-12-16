@@ -76,10 +76,7 @@ export class WebSocketManager implements IManeger<WebSocket>{
         const opponent = player.getOpponent()
         if(opponent){
             this.saveGameStatus(player, data)
-            this.send(opponent.Socket,new WebSocketMessage<IAction>(SocketEvent.ACTION,{
-                actionType:data.actionType,
-                opponent: player.Info
-            }))
+            this.send(opponent.Socket,new WebSocketMessage<IAction>(SocketEvent.ACTION,data))
         }
     }
 

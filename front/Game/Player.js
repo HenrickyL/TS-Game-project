@@ -59,7 +59,7 @@ export class Player extends RigidObject{
                 this.moveTo(oldPos)
             }
             this._webSocket.send(new WebSocketMessage(SocketEvent.ACTION,{
-                actionType: GameActions.IN_DOWN,
+                actionType: GameActions.IN_UP,
                 opponent: this.info
             }))
         }else if(this.#input.keyDown(InputKeys.DOWN_ARROW)){

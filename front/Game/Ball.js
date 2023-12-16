@@ -29,6 +29,7 @@ export class Ball extends RigidObject{
     }
 
     start(){
+        this.#start= true
         this.speed = this.speed.prod(this.#magSpeed)
     }
 
@@ -38,15 +39,17 @@ export class Ball extends RigidObject{
     }
 
     update(){
-        this.translateTo(this.speed)
-        if(this.bbox.top <= 0 || this.bbox.bottom >= this.#height){
-            this.speed.inverteY(0.7 + Math.random() * 0.3)
-        }
-
-        if(this.bbox.left <= 0 ){
-            this.#countOpponent++
-        }else if(this.bbox.right >= this.#width ){
-            this.#countPlayer++
+        if(this.#start){
+            this.translateTo(this.speed)
+            if(this.bbox.top <= 0 || this.bbox.bottom >= this.#height){
+                this.speed.inverteY(0.7 + Math.random() * 0.3)
+            }
+    
+            if(this.bbox.left <= 0 ){
+                this.#countOpponent++
+            }else if(this.bbox.right >= this.#width ){
+                this.#countPlayer++
+            }
         }
     }
 

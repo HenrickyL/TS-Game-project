@@ -8,7 +8,7 @@ import {Timer} from "../Engine/Timer.js"
 import {Text} from "../Engine/Text.js"
 import { Player } from './Player.js'
 import {Opponent} from './Opponent.js'
-import { InputKeys, SocketEvent } from '../Engine/enums/index.js'
+import { GameActions, InputKeys, SocketEvent } from '../Engine/enums/index.js'
 import { WebSocketMessage } from '../Engine/Middleware/WebSocketMessage.js'
 import { Vector } from '../Engine/Vector.js'
 
@@ -81,6 +81,14 @@ export class Game{
         this.#opponent.webSocket = this.#webSocket
         this.#opponent.input = this.#input
         this.#scene.add(this.#opponent)
+        this.#webSocket.addMessageHandler(SocketEvent.ACTION, (actionData)=>{
+           const action = actionData.data.actionType
+           if(action === GameActions.IN_DOWN){
+            this.#opponent.translateByDirection(Vector.Down)
+           }else if(action === GameActions.IN_UP){
+            this.#opponent.translateByDirection(Vector.Up)
+           }
+        })
     }
 
     #initBall(){
@@ -108,6 +116,7 @@ export class Game{
         })
         
         this.#createBtStart()
+        console.clear()
     }
 
 
@@ -122,7 +131,7 @@ export class Game{
             this.#timerCount.draw(this.#context)
         }
     }
-
+    
     #updateTimer(){
         if(this.#start && this.#pause){
             if(this.#timer.getElapsedSeconds() > this.#timeToGo){
