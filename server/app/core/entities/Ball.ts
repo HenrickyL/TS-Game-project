@@ -2,14 +2,17 @@ import { IPosition, IVector } from "@core/DTOs"
 
 export class Ball{
     private position : IPosition = {x:0, y:0}
-    private speed : IVector
+    private speed : IVector = {x:0, y:0}
     private magSpeed : number = 2
-    constructor(speed: IVector){
-        this.speed = speed
+    constructor(){
     }
 
     get direction():IVector{
         return this.speed
+    }
+
+    set direction(speed){
+        this.speed = speed
     }
 
     get Position(){

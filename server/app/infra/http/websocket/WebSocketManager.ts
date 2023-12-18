@@ -63,11 +63,22 @@ export class WebSocketManager implements IManeger<WebSocket>{
                     const data = dataObj.data as IAction
                     this.emitAction(player, data)
                     break;
+                case SocketEvent.COLLISION:
+                    this.collisionInPlayer(player)
+                    break
                 default:
                     this.onMessage(socket, message);
                     break
             }
         });
+    }
+
+    private collisionInPlayer(player: Player){
+        const game = player.Game
+        if(game){
+            const ball = game?.getBall()
+            ball.invertX();
+        }
     }
 
     private updateGame(player: Player, pos: IPosition){
@@ -143,13 +154,8 @@ export class WebSocketManager implements IManeger<WebSocket>{
 
     
 
-    removeFromQueue(socket: WebSocket): void {
-        const player = this.getPlayerBySocket(socket);
-        if (player !== null) {
-            const index = this.clientQueue.indexOf(player)
-            if(index != -1)
-                this.clientQueue.splice(index, 1);
-        }
+    removeFromQueue(player: Player): void {
+        this.clientQueue = this.clientQueue.filter(p => p.Id !== player.Id)
     }
 
     logClient(clientId: string, message: string): void{
@@ -171,12 +177,13 @@ export class WebSocketManager implements IManeger<WebSocket>{
             this.connectedSockets.delete(player.Id);
             player.SetStatus(PlayerStatus.DISCONNECTED)
             this.logClient(player.Id,"Cliente desconectado.")
-            this.removeFromQueue(socket);
+            this.removeFromQueue(player);
             const game = player.Game
             if(game && game.Status != GameStatus.STOP){
                 game.setStatus(GameStatus.STOP)
-                game.Players.forEach(player=>{
-                    WebSocketManager.send(player.Socket, new WebSocketMessage(SocketEvent.STOP,
+                game.Players.forEach(p=>{
+                    this.removeFromQueue(p);
+                    WebSocketManager.send(p.Socket, new WebSocketMessage(SocketEvent.STOP,
                         {   gameId: game.Id,
                             message: "Seu Oponente se desconectou"
                         }))

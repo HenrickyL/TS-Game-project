@@ -9,6 +9,8 @@ export class Opponent extends Player{
 
     update(){}
 
+    onCollision(obj){}
+
     translateByDirection(direction){
         this.speed = direction.prod(this._magSpeed)
         this.translateTo(this.speed)

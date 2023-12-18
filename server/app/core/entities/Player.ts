@@ -39,6 +39,7 @@ export class Player{
     }
     increaseScore(){
         this.score++
+        this.game?.reset()
     }
 
     get isLeft():boolean{
