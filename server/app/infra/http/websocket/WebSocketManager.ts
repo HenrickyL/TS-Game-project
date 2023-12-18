@@ -77,7 +77,6 @@ export class WebSocketManager implements IManeger<WebSocket>{
         const game = player.Game
         if(game){
             const ball = game?.getBall()
-            console.log("collide", ball)
             ball.invertX();
         }
     }

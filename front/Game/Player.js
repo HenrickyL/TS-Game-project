@@ -69,8 +69,7 @@ export class Player extends RigidObject{
     onCollision(obj){
         if(obj instanceof Ball){
             const timer = this.#timer.getElapsedSeconds()
-            if(timer > 1){
-                console.log(timer)
+            if(timer > 0.7){
                 this.#timer.resetTimer();
                 this._webSocket.send(new WebSocketMessage(SocketEvent.COLLISION,{}))
             }
