@@ -27,7 +27,8 @@ export class Game{
 
     #infos = []
     #timerCount
-    #stringAux = ""
+    #scoreLeft
+    #scoreRight
 
     #ball
     #player
@@ -78,8 +79,8 @@ export class Game{
         this.#player.webSocket = this.#webSocket
         this.#player.input = this.#input
         this.#scene.add(this.#player)
-
     }
+
     #initOpponent(){
         this.#opponent = new Opponent(this.#opponentPosition, this.#graphics.height)
         this.#opponent.webSocket = this.#webSocket
@@ -112,9 +113,6 @@ export class Game{
         this.#graphics = graphics
         this.#webSocket = webSocket
         this.#context = this.#graphics.context
-        const ref = this.#graphics.topCenter
-        const pos = new Position(ref.x, ref.y+20)
-        this.#timerCount = new Text(`${this.#timeToGo.toString().padStart(2,'0')}`,pos, Color.BLACK, 45)
         
         this.#initBall()
         this.#webSocket.addMessageHandler(SocketEvent.JOIN, (joinData)=>{
@@ -132,11 +130,44 @@ export class Game{
             this.#ball.speed = new Vector(direction.x, direction.y)
             this.#initPlayer()
             this.#initOpponent()
+            this.#initTexts()
+
+            this.#webSocket.addMessageHandler(SocketEvent.RESET, (resetData)=>{
+                const data = resetData.data
+                this.#player.score = data.score
+                this.#opponent.score = data.opponentScore
+                this.reset()
+             })
         })
         
         
         this.#createBtStart()
         console.clear()
+    }
+
+    #initTexts(){
+        const ref = this.#graphics.topCenter
+        const pos = new Position(ref.x, ref.y+20)
+        this.#timerCount = new Text(`${this.#timeToGo.toString().padStart(2,'0')}`,pos, Color.BLACK, 45)
+
+        const refLeft = this.#graphics.bottomLeft
+        const posLeft = new Position(refLeft.x+30, refLeft.y-30)
+        const left = this.#player.isLeft ? this.#player : this.#opponent
+        
+        this.#scoreLeft = new Text(`${left.score.toString().padStart(1,'0')}`,posLeft, Color.BLACK, 28)
+        
+        const right = this.#player.isLeft ? this.#player : this.#opponent
+        const refRight = this.#graphics.bottomRight
+        const posRight = new Position(refRight.x-30, refRight.y-30)
+        this.#scoreRight = new Text(`${right.score.toString().padStart(1,'0')}`,posRight, Color.BLACK, 28)
+    }
+
+    reset(){
+        this.#pause = true
+        this.#ball.moveTo(this.#graphics.middleCenter)
+        this.#timer.resetTimer()
+        this.#ball.reset()
+        this.#timerCount.size = 45
     }
 
 
@@ -149,6 +180,9 @@ export class Game{
                 info.draw(this.#context)
             })
             this.#timerCount.draw(this.#context)
+            this.#scoreLeft.draw(this.#context)
+            this.#scoreRight.draw(this.#context)
+
         }
     }
     
@@ -161,10 +195,16 @@ export class Game{
                 this.#ball.start()
             }else{
                 this.#timerCount.text = `${(this.#timeToGo - Math.floor(this.#timer.getElapsedSeconds())).toString().padStart(3,'0')}`
+                if(this.#player.isLeft){
+                    this.#scoreLeft.text = `${this.#player.score.toString().padStart(1,'0')}`
+                    this.#scoreRight.text = `${this.#opponent.score.toString().padStart(1,'0')}`
+                }else{
+                    this.#scoreLeft.text = `${this.#opponent.score.toString().padStart(1,'0')}`
+                    this.#scoreRight.text = `${this.#player.score.toString().padStart(1,'0')}`
+                }
             }
         }else if(!this.#pause){
             this.#timerCount.text = `${Math.floor(this.#timer.getElapsedSeconds()).toString().padStart(3,'0')}`
-
         }
     }
 }

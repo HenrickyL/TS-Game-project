@@ -23,7 +23,7 @@ export class WebSocketHandler {
   
     handleMessage(data) {
       if (data.type) {
-        console.log(data.type)
+        // console.log(data.type)
         this.#notifyHandlers(data.type, data);
       }
     }

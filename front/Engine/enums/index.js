@@ -55,7 +55,9 @@ export const SocketEvent = {
     STOP: 'STOP',
     PAUSE: 'PAUSE',
     ACTION: "ACTION",
-    UPDATE: "UPDATE"
+    UPDATE: "UPDATE",
+    COLLISION: "COLLISION",
+    RESET: "RESET",
 }
 
 export const  GameActions = {

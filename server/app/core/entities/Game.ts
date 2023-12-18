@@ -1,8 +1,11 @@
 import {v4 as uuid} from 'uuid'
 import { Player } from "./Player"
 import { GameStatus } from "@core/enums/GameStatus"
-import { IGame, IVector } from "@core/DTOs"
+import { IGame, IPosition, IVector } from "@core/DTOs"
 import { Ball } from './Ball'
+import { WebSocketManager } from '@infra/http/websocket/WebSocketManager'
+import { SocketEvent } from '@core/enums'
+import { WebSocketMessage } from '@infra/http/websocket/WebSocketMessage'
 
 
 export class Game{
@@ -13,6 +16,7 @@ export class Game{
     private status: GameStatus = GameStatus.PAUSE
     private ball : Ball
     private players: Player[] = []
+    private initialPosition: IPosition = {x: 400, y: 300}
 
     constructor(player1: Player, player2: Player){
         this.id = uuid()
@@ -21,8 +25,13 @@ export class Game{
 
         this.players.push(this.playerLeft)
         this.players.push(this.playerRight)
+        this.ball = new Ball()
+        this.setInitialDirection()
+    }
+
+    setInitialDirection(){
         const direction : IVector = {x:getDirection(), y: getDirection()}
-        this.ball = new Ball(direction)
+        this.ball.direction = direction
     }
 
     getBall(): Ball{
@@ -62,10 +71,22 @@ export class Game{
         ball.update()
         if(ball.Position.x < 0){
             this.playerRight.increaseScore()
+            this.reset()
         }
         if(ball.Position.x > 800){
             this.playerLeft.increaseScore()
+            this.reset()
         }
+    }
+
+    reset(){
+        this.setInitialDirection()
+        this.players.forEach(p=>{
+            WebSocketManager.send(p.Socket, new WebSocketMessage(SocketEvent.RESET,{
+                score: p.Score,
+                opponentScore: p.getOpponent()?.Score
+            }))
+        })
     }
 
     public setStatus(status: GameStatus):void{

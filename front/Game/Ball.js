@@ -38,8 +38,7 @@ export class Ball extends RigidObject{
     }
 
     reset(){
-        this.position.moveTo(this.initialPosition)
-        this.start()
+        this.#start = false
     }
 
     draw(context){
