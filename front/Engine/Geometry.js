@@ -299,6 +299,29 @@ export class Point extends Geometry {
         return this.#isSquare;
     }
 
+    static draw(context, points = [],settings = {}){
+        const size = settings.size || 3
+        points.forEach(point=>{
+            context.save();
+            context.translate(point.x, point.y);
+            
+            if (settings.isSquare) {
+                context.fillRect(-size/2, -size/2, size, size);
+            } else {
+                context.beginPath();
+                context.arc(0, 0, size/2, 0, Math.PI * 2);
+                if(settings.color instanceof Color){
+                    context.fillStyle = color.RGBA;
+                }else{
+                    context.fillStyle = Color.BLUE.RGBA;
+                }
+                context.fill();
+                context.closePath();
+            }
+            context.restore()
+        })
+    }
+
     draw(context) {
         context.save();
         context.translate(this.x, this.y);
@@ -328,6 +351,30 @@ export class Polygon extends Geometry{
         this.#points = points;
         this.#borderColor = borderColor
     }
+    
+    static draw(context, points, fillColor = null, strokeColor = Color.BLACK){
+        if(points.length<3)return
+        context.save()
+
+        context.beginPath();
+        points.forEach((point, i)=>{
+            if(i == 0){
+                context.moveTo(point.x,point.y)
+            }else{
+                context.lineTo(point.x,point.y)
+            }
+        })
+        context.lineTo(points[0].x,points[0].y)
+        // context.lineWidth = 1
+        context.strokeStyle = strokeColor.RGBA;
+        context.stroke()
+        if(fillColor){
+            context.fillStyle = fillColor.RGBA;
+            context.fill()
+        }
+        context.closePath();
+        context.restore()
+    }
 
     addPoint(position){
         if(!this.#points.some(pos => pos.x === position.x && pos.y === position.y))
@@ -335,6 +382,7 @@ export class Polygon extends Geometry{
     }
 
     draw(context) {
+        context.save()
         if(this.#points.length<3)return
 
         context.beginPath();
@@ -351,6 +399,7 @@ export class Polygon extends Geometry{
         context.fillStyle = this.color.RGBA;
         context.fill()
         context.closePath();
+        context.restore()
     }
 
     
