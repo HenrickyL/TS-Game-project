@@ -14,8 +14,11 @@ export class Renderer3D {
     #matProj
     #matRotX
     #matRotZ
+    #matRotY
+
     #angleXRad = 0
     #angleZRad = 0
+    #angleYRad = 0
 
     #z = 2
 
@@ -60,6 +63,8 @@ export class Renderer3D {
         this.#matProj = new Matrix4x4() 
         this.#matRotX = new Matrix4x4() 
         this.#matRotZ = new Matrix4x4() 
+        this.#matRotY = new Matrix4x4() 
+
         this.#calculatedMatrixProjection()
     }
 
@@ -77,6 +82,20 @@ export class Renderer3D {
         this.#matRotZ.set(2,2, 1)
         this.#matRotZ.set(3,3, 1)
 
+    }
+    #calculatedMatrixRotateY(){
+        this.#matRotY = new Matrix4x4() 
+
+        const angle = this.#angleYRad
+        const sin = Math.sin(angle)
+        const cos = Math.cos(angle)
+        
+        this.#matRotY.set(0,0, cos)
+        this.#matRotY.set(0,1, 0)
+        this.#matRotY.set(0,2, sin)
+        this.#matRotY.set(1,1, 1)
+        this.#matRotY.set(2,0, -sin)
+        this.#matRotY.set(2,2, cos)
     }
 
     #calculatedMatrixRotateX(){
@@ -110,8 +129,9 @@ export class Renderer3D {
         this.#matProj.set(3,3, 0)
     }
     projectVertex(vertex) {
-        const v1 = this.#multiplyMatrixVector(vertex, this.#matRotZ.matrix)
-        const v = this.#multiplyMatrixVector(v1, this.#matRotX.matrix)
+        const vY = this.#multiplyMatrixVector(vertex, this.#matRotY.matrix)
+        const vZ = this.#multiplyMatrixVector(vY, this.#matRotZ.matrix)
+        const v = this.#multiplyMatrixVector(vZ, this.#matRotX.matrix)
 
         // const v = 
         // console.log(v)
@@ -132,12 +152,15 @@ export class Renderer3D {
         return result
     }
 
-    update(angleX, angleZ){
-        this.#angleXRad = angleX 
-        this.#angleZRad = angleZ 
+    update(settings = {angleX:0, angleZ:0, angleY:0}){
+        this.#angleXRad = settings.angleX 
+        this.#angleZRad = settings.angleZ 
+        this.#angleYRad = settings.angleY 
+
 
         this.#calculatedMatrixRotateX()
         this.#calculatedMatrixRotateZ()
+        this.#calculatedMatrixRotateY()
     }
 
     render(mesh, settings = {}) {

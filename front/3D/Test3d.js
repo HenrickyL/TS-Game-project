@@ -1,11 +1,35 @@
 import {Mesh, Vec3d, Triangle} from './middleware.js'
 
-
 export class Test3d{
     #cubeMesh
     constructor(){
 
         
+    }
+
+    async getObj(path) {
+        return new Promise((resolve, reject) => {
+            const loader = new THREE.OBJLoader();
+            loader.load(path, function (object) {
+                const loadedMesh = object.children[0];
+                const geometry = loadedMesh.geometry;
+                const triangles = [];
+                const positions = geometry.attributes.position.array;
+    
+                for (let i = 0; i < positions.length; i += 9) {
+                    const p1 = new Vec3d(positions[i], positions[i + 1], positions[i + 2]);
+                    const p2 = new Vec3d(positions[i + 3], positions[i + 4], positions[i + 5]);
+                    const p3 = new Vec3d(positions[i + 6], positions[i + 7], positions[i + 8]);
+    
+                    triangles.push(new Triangle([p1, p2, p3]));
+                }
+    
+                const mesh = new Mesh(triangles);
+                resolve(mesh);
+            }, undefined, function (error) {
+                reject(error);
+            });
+        });
     }
 
     getCube(){

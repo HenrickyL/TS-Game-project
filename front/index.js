@@ -2,7 +2,7 @@ import { Renderer3D } from "./3D/Renderer3D.js"
 import { Test3d } from "./3D/Test3d.js"
 import {Input} from './Engine/Input.js'
 import { InputKeys } from "./Engine/enums/index.js"
-window.addEventListener('load', ()=>{
+window.addEventListener('load', async ()=>{
     // const ws = new WebSocketHandler("ws://localhost:3000")
     // const engine = new Engine()
     // engine.webSocket = ws
@@ -11,8 +11,9 @@ window.addEventListener('load', ()=>{
 
     const test = new Test3d()
     const graph = new Renderer3D(800,600)
-
+    const obj = await test.getObj('./public/tree.obj')
     const forms = [
+        obj,
         test.getCube(),
         test.getHexagonalPrism(),
         test.getPyramid(),
@@ -25,6 +26,8 @@ window.addEventListener('load', ()=>{
     const input = new Input(graph.canvas)
     let angleX = 0
     let angleZ = 0
+    let angleY = 0
+
     let isColor = false
     let isPoint = false
     let z = 1
@@ -64,10 +67,14 @@ window.addEventListener('load', ()=>{
         }else if(input.keyDown(InputKeys.UP_ARROW)) {
             angleZ -= 1
         }
-    }, 100)
 
+        if(input.mouseWheel != 0){
+            const value = input.mouseWheel
+            angleY = value/90*0.7
+        }
+    }, 100)
     setInterval(()=>{
-        graph.update(angleX, angleZ)
+        graph.update({angleX, angleZ, angleY})
         graph.render(mesh.triangles, {isPoint, isColor})
     }, 1000/45)
 })
